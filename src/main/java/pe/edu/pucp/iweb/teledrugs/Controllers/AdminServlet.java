@@ -24,6 +24,7 @@ public class AdminServlet extends HttpServlet {
             request.setAttribute("listaFarmacias",listaFarmacias);
             request.setAttribute("pag",Integer.parseInt(offset));
             System.out.println(Integer.parseInt(offset));
+            System.out.println("Tamaño de lista de farmacias "+ listaFarmaciasTotal.size());
             request.setAttribute("index",listaFarmaciasTotal.size()/4+1);
             System.out.println("Index = "+ listaFarmaciasTotal.size()/4+1);
             RequestDispatcher view = request.getRequestDispatcher("FlujoAdministrador/Listafarmacias/Listafarmacias.jsp");

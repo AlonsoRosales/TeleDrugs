@@ -133,25 +133,25 @@
 							<ul class="pagination justify-content-center">
 								<%if (pag==1){%>
 								<li class="page-item disabled">
-									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag-1%>">Previous</a>
+									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal&offset=<%=pag-1%>">Previous</a>
 								</li>
 								<%}else
 								{%>
 									<li class="page-item">
-									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag-1%>">Previous</a>
+									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?offset=<%=pag-1%>">Previous</a>
 									</li>
 								<%}%>
 								<%for (int j=1; j<=index;j++){%>
-								<li class="page-item"><a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=j%>"> <%=j%>  </a></li>
+								<li class="page-item"><a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?offset=<%=j%>"> <%=j%>  </a></li>
 								<%}
 								int a=0;
-								if(pag==index ||index==1){%>
+								if(pag==2){%>
 								<li class="page-item disabled">
-									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag+1%>">Next</a>
+									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?offset=<%=pag+1%>">Next</a>
 								</li>
 								<%}else {%>
 								<li class="page-item">
-									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag+1%>">Next</a>
+									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?offset=<%=pag+1%>">Next</a>
 									<%}%>
 
 							</ul>
