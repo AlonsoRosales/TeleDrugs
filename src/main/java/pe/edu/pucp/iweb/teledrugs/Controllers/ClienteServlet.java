@@ -148,6 +148,10 @@ public class ClienteServlet extends HttpServlet {
                 session.removeAttribute("carrito");
                 response.sendRedirect(request.getContextPath()+"/Usuario?opcion=historialPedidos");
                 break;
+            case "borrarPedido":
+                clienteDao.cancelarPedido(Integer.parseInt(request.getParameter("numeroOrden")));
+                response.sendRedirect(request.getContextPath()+"/Usuario?opcion=historialPedidos");
+                break;
         }
 
     }

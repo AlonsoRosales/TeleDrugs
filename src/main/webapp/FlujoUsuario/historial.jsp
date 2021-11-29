@@ -1,6 +1,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Beans.BFarmacia" %>
 <%@ page import="pe.edu.pucp.iweb.teledrugs.DTO.DTOPedidoCliente" %>
+<%@ page import="pe.edu.pucp.iweb.teledrugs.Daos.ClienteDao" %>
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%ArrayList<DTOPedidoCliente> listaPedidos = (ArrayList) session.getAttribute("listaPedidos");%>
@@ -125,8 +126,21 @@
 							</div>
 						  </div>
 						</div>
-						<a class="remove-from-cart" data-bs-toggle="modal" href="#exampleModalToggle" data-toggle="tooltip" title="" data-original-title="Remove item"><i class="bi bi-trash"></i></a>
-					</td> 
+                        <%
+                            String fecha = bCliente.getFecha();
+                            ClienteDao clienteDao = new ClienteDao();
+                            double horas =Double.parseDouble(clienteDao.restarFechas(fecha));
+
+                          if(bCliente.getEstado().equalsIgnoreCase("pendiente") && horas>1.0){
+                        %>
+                        <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=borrarPedido">
+                            <input name="numeroOrden" value="<%=bCliente.getNumeroOrden()%>" type="hidden"/>
+                            <button  class="btn btn-outline-danger flex-shrink-0" type="submit">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+					    <%}%>
+                    </td>
                 </tr>
             <%}%>
             </tbody>

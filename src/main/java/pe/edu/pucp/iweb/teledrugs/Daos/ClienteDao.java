@@ -7,16 +7,22 @@ import pe.edu.pucp.iweb.teledrugs.DTO.DTOCarritoCliente;
 import pe.edu.pucp.iweb.teledrugs.DTO.DTOPedidoCliente;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class ClienteDao  extends BaseDao{
+public class ClienteDao  extends BaseDao {
     String user = "root";
     String password = "root";
     String url = "jdbc:mysql://localhost:3306/mydb";
     HashMap<String, String> carrito = new HashMap<>();
+
     //FUNCION PARA VALIDAR NOMBRE Y APELLIDOS
     public boolean nombreyApellidoValid(String nombre) {
         String regex = "^[\\w'\\-,.][^0-9_!¡?÷?¿/\\\\+=@#$%ˆ&*(){}|~<>;:[\\]]]{1,}$";
@@ -43,6 +49,7 @@ public class ClienteDao  extends BaseDao{
         Matcher matcher = pattern.matcher(fecha);
         return matcher.find();
     }
+
     public boolean emailisValid(String email) {
         String regex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         Pattern pattern = Pattern.compile(regex);
@@ -52,7 +59,7 @@ public class ClienteDao  extends BaseDao{
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------
     //FUNCION QUE REGISTRA A UN USUARIO YA HAY CORREO
-    public void registrarDatosUsuario(String logueo_correo, String dni, String nombre, String apellidos,String fecha,String distrito) {
+    public void registrarDatosUsuario(String logueo_correo, String dni, String nombre, String apellidos, String fecha, String distrito) {
         String sqlInsert = "INSERT INTO cliente(dni,nombre,apellidos,fecha_nac,distrito,logueo_correo)\n" +
                 "VALUES(?,?,?,?,?,?)";
         if (dniValid(dni) && nombreyApellidoValid(nombre) && nombreyApellidoValid(apellidos) && fechaIsValid(fecha)) {
@@ -76,24 +83,25 @@ public class ClienteDao  extends BaseDao{
                 "VALUES(?,?,?,?,?,?)";
         try (Connection conn = this.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
-            pstmt.setString(1,clientito.getDNI());
-            pstmt.setString(2,clientito.getNombre());
-            pstmt.setString(3,clientito.getApellidos());
-            pstmt.setString(4,clientito.getFechaNacimiento());
-            pstmt.setString(5,clientito.getDistrito());
-            pstmt.setString(6,clientito.getLogueoCorreo());
+            pstmt.setString(1, clientito.getDNI());
+            pstmt.setString(2, clientito.getNombre());
+            pstmt.setString(3, clientito.getApellidos());
+            pstmt.setString(4, clientito.getFechaNacimiento());
+            pstmt.setString(5, clientito.getDistrito());
+            pstmt.setString(6, clientito.getLogueoCorreo());
             pstmt.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
     }
-    public BCliente obtenerCliente(String correo){
-        BCliente bCliente= new BCliente();
+
+    public BCliente obtenerCliente(String correo) {
+        BCliente bCliente = new BCliente();
         String sql = "SELECT c.dni, c.nombre, c.apellidos, c.fecha_nac,c.distrito,c.logueo_correo FROM cliente c  WHERE ? = c.logueo_correo";
 
-        try(Connection conn = this.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (Connection conn = this.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, correo);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
@@ -103,7 +111,7 @@ public class ClienteDao  extends BaseDao{
             String fecha_nac = rs.getString(4);
             String distrito = rs.getString(5);
             String logueo_correo = rs.getString(6);
-            bCliente= new BCliente(dni,nombre,apellidos,distrito,fecha_nac,logueo_correo);
+            bCliente = new BCliente(dni, nombre, apellidos, distrito, fecha_nac, logueo_correo);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -111,7 +119,6 @@ public class ClienteDao  extends BaseDao{
 
         return bCliente;
     }
-
 
 
     //FUNCION QUE ELIMINA A UN CLIENTE CON SU CORREO
@@ -146,7 +153,7 @@ public class ClienteDao  extends BaseDao{
 
     //FUNCION QUE MUESTRA PERFIL DE CLIENTE
     public BCliente mostrarPerfil(String correo) {
-        String sql = "SELECT c.dni,c.nombre,c.apellidos,c.distrito, c.fecha FROM cliente c  WHERE ? = c.logueo_correo";
+        String sql = "SELECT c.dni,c.nombre,c.apellidos,c.distrito FROM cliente c  WHERE ? = c.logueo_correo";
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, correo);
@@ -156,9 +163,9 @@ public class ClienteDao  extends BaseDao{
             String nombre = rs.getString(2);
             String apellidos = rs.getString(3);
             String distrito = rs.getString(4);
-            BCliente bCliente = new BCliente(dni,nombre,apellidos,distrito,correo);
+            BCliente bCliente = new BCliente(dni, nombre, apellidos, distrito, correo);
             return bCliente;
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return null;
@@ -173,7 +180,7 @@ public class ClienteDao  extends BaseDao{
             rs.next();
             String dni = rs.getString(1);
             return dni;
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return null;
@@ -182,7 +189,7 @@ public class ClienteDao  extends BaseDao{
     //FUNCION QUE MUESTAR HISTORIAL DE PEDIDOS
     public ArrayList<DTOPedidoCliente> mostrarHistorial(String DNI) {
         ArrayList<DTOPedidoCliente> pedidos = new ArrayList<>();
-        String sql = "SELECT truncate(sum(pr.precio*pt.cantidad),1),sum(pt.cantidad),p.numeroOrden , p.estado , f.nombre FROM pedidos p\n" +
+        String sql = "SELECT truncate(sum(pr.precio*pt.cantidad),1),sum(pt.cantidad),p.numeroOrden , p.estado , f.nombre,p.fechaRecojo FROM pedidos p\n" +
                 "INNER JOIN producto_tiene_pedidos pt ON pt.pedidos_numeroOrden=p.numeroOrden\n" +
                 "INNER JOIN producto pr ON pr.idProducto=pt.producto_idProducto\n" +
                 "INNER JOIN farmacia f ON pr.farmacia_ruc = f.ruc\n" +
@@ -197,7 +204,8 @@ public class ClienteDao  extends BaseDao{
                 int numeroOrden = rs.getInt(3);
                 String estado = rs.getString(4);
                 String farmacia = rs.getString(5);
-                pedidos.add(new DTOPedidoCliente(numeroOrden,cantidad, estado,resumenPago,farmacia));
+                String fecha = rs.getString(6);
+                pedidos.add(new DTOPedidoCliente(numeroOrden, cantidad, estado, resumenPago, farmacia,fecha));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -237,21 +245,19 @@ public class ClienteDao  extends BaseDao{
 
     //FUNCION PARA AÑADIR UN PRODUCOT AL CARRITO
 
-    public void agregarAlCarrito( String cantidad,String idProducto,String stock,String preciototal){
-        String sql="INSERT INTO carrito (cantidad,idProducto,stock,preciototal) VALUES (?,?,?,?)";
-        try(Connection conn = DriverManager.getConnection(url,user,password);
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
-            pstmt.setString(1,cantidad);
-            pstmt.setString(2,idProducto);
-            pstmt.setString(3,stock);
-            pstmt.setString(4,preciototal);
+    public void agregarAlCarrito(String cantidad, String idProducto, String stock, String preciototal) {
+        String sql = "INSERT INTO carrito (cantidad,idProducto,stock,preciototal) VALUES (?,?,?,?)";
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, cantidad);
+            pstmt.setString(2, idProducto);
+            pstmt.setString(3, stock);
+            pstmt.setString(4, preciototal);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-
 
 
     //FUNCION PARA BUSCAR UN PRODUCTO
@@ -266,10 +272,10 @@ public class ClienteDao  extends BaseDao{
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
-            pstmt.setString(1,ruc);
-            pstmt.setString(2,"%" + nombre + "%");
+            pstmt.setString(1, ruc);
+            pstmt.setString(2, "%" + nombre + "%");
 
-            try(ResultSet rs = pstmt.executeQuery()){
+            try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     DTOBuscarProductoCliente producto = new DTOBuscarProductoCliente();
                     producto.setNombre(rs.getString(1));
@@ -286,14 +292,15 @@ public class ClienteDao  extends BaseDao{
         }
         return productos;
     }
+
     public DTOBuscarProductoCliente buscarProductoporId(String ruc, int idProducto) {
         DTOBuscarProductoCliente producto = null;
         String sql = "SELECT p.nombre,p.descripcion,p.foto,p.precio,p.idProducto,p.stock FROM producto p INNER JOIN farmacia f ON f.ruc = p.farmacia_ruc WHERE f.ruc = ? AND p.idProducto = ?;";
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
-            pstmt.setString(1,ruc);
-            pstmt.setInt(2,idProducto);
+            pstmt.setString(1, ruc);
+            pstmt.setInt(2, idProducto);
 
             ResultSet rs = pstmt.executeQuery();
             rs.next();
@@ -311,27 +318,25 @@ public class ClienteDao  extends BaseDao{
         return producto;
     }
 
-    public BCliente updatePerfil(String nombre, String Apellido, String distrito, String correo){
-        String sql="UPDATE cliente c SET c.nombre = ?, c.apellidos = ?, c.distrito = ? WHERE c.logueo_correo= ?;";
-        try(Connection conn = DriverManager.getConnection(url,user,password);
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
-            pstmt.setString(1,nombre);
-            pstmt.setString(2,Apellido);
-            pstmt.setString(3,distrito);
-            pstmt.setString(4,correo);
+    public BCliente updatePerfil(String nombre, String Apellido, String distrito, String correo) {
+        String sql = "UPDATE cliente c SET c.nombre = ?, c.apellidos = ?, c.distrito = ? WHERE c.logueo_correo= ?;";
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nombre);
+            pstmt.setString(2, Apellido);
+            pstmt.setString(3, distrito);
+            pstmt.setString(4, correo);
             pstmt.executeUpdate();
             BCliente bCliente = mostrarPerfil(correo);
             return bCliente;
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return null;
     }
 
 
-
-
-    public String obtenerIDCliente (String correo){
+    public String obtenerIDCliente(String correo) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -340,17 +345,17 @@ public class ClienteDao  extends BaseDao{
 
         String DNI = null;  //IGUAL SE LE VA ALLENAR EL CAMPO YA QUE SE VALIDO QUE EXISTE UNA PERSONA CON DICHO DNI
 
-        String sentenciaSQL = "SELECT dni,nombre,apellidos ,logueo_correo FROM cliente\n"+
-                "INNER JOIN credenciales ON (cliente.logueo_correo = credenciales.correo)\n"+
+        String sentenciaSQL = "SELECT dni,nombre,apellidos ,logueo_correo FROM cliente\n" +
+                "INNER JOIN credenciales ON (cliente.logueo_correo = credenciales.correo)\n" +
                 "WHERE logueo_correo = ?;\n";
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement(sentenciaSQL)) {
 
-            pstmt.setString(1,correo);
+            pstmt.setString(1, correo);
 
-            try(ResultSet rs = pstmt.executeQuery()){
-                if(rs.next()){
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
                     DNI = rs.getString(1);
                 }
             }
@@ -364,21 +369,21 @@ public class ClienteDao  extends BaseDao{
     }
 
 
-    public boolean existeCliente(String correo, String dni){
+    public boolean existeCliente(String correo, String dni) {
         Boolean existe = false;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        String sql="SELECT * FROM cliente WHERE dni = ? AND logueo_correo = ?";
+        String sql = "SELECT * FROM cliente WHERE dni = ? AND logueo_correo = ?";
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1,dni);
-            pstmt.setString(2,correo);
+            pstmt.setString(1, dni);
+            pstmt.setString(2, correo);
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next()){
-                existe=true;
+            if (rs.next()) {
+                existe = true;
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -386,22 +391,22 @@ public class ClienteDao  extends BaseDao{
         return existe;
     }
 
-    public void crearPedido(ArrayList<DTOCarritoCliente> dtoCarritoClientes,String fecha,String hora,String dni){
+    public void crearPedido(ArrayList<DTOCarritoCliente> dtoCarritoClientes, String fecha, String hora, String dni) {
         String sql = "INSERT INTO pedidos(fechaRecojo,estado,usuarioDni) VALUES(?,'Pendiente',?)";
-        try(Connection conn = this.getConnection();
-        PreparedStatement pstmt =conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);) {
-            pstmt.setString(1,fecha +" "+ hora);
-            pstmt.setString(2,dni);
+        try (Connection conn = this.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);) {
+            pstmt.setString(1, fecha + " " + hora);
+            pstmt.setString(2, dni);
             pstmt.executeUpdate();
-            try (ResultSet rs = pstmt.getGeneratedKeys()){
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 rs.next();
                 int key = rs.getInt(1);
                 String sql2 = "INSERT INTO producto_tiene_pedidos(pedidos_numeroOrden,producto_idProducto,cantidad) VALUES (?,?,?)";
-                for(DTOCarritoCliente carr : dtoCarritoClientes) {
+                for (DTOCarritoCliente carr : dtoCarritoClientes) {
                     try (PreparedStatement pstmt2 = conn.prepareStatement(sql2)) {
-                        pstmt2.setInt(1,key);
-                        pstmt2.setInt(2,Integer.parseInt(carr.getCodigo()));
-                        pstmt2.setInt(3,carr.getCantidad());
+                        pstmt2.setInt(1, key);
+                        pstmt2.setInt(2, Integer.parseInt(carr.getCodigo()));
+                        pstmt2.setInt(3, carr.getCantidad());
                         pstmt2.executeUpdate();
                     }
                 }
@@ -459,4 +464,39 @@ public class ClienteDao  extends BaseDao{
             e.printStackTrace();
         }
     }*/
+
+    public void cancelarPedido(int numeroOrden) {
+        String sql = "UPDATE pedidos SET estado = 'Cancelado' WHERE (numeroOrden = ?);";
+        try (Connection conn = this.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+            pstmt.setInt(1, numeroOrden);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String restarFechas(String fecha) {
+        String horas = null;
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        String fecha_actual= dtf5.format(LocalDateTime.now());
+        try
+        {
+            Date d1 = df.parse(fecha_actual);
+            Date d2 = df.parse(fecha);
+            long diff = d2.getTime() - d1.getTime();
+            long day=diff/(24*60*60*1000);
+            long hour=(diff/(60*60*1000)-day*24);
+            long min=((diff/(60*1000))-day*24*60-hour*60);
+            System.out.println("MINUTOS EN HORAS: "+ min/60.0);
+            horas=String.valueOf(day*24 + hour + (min/60.0));
+            System.out.println("HORAS: "+ horas);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        return horas;
+    }
 }

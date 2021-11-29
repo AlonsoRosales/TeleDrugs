@@ -3,8 +3,8 @@
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Beans.BFarmacia" %>
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Daos.FarmaciaDao" %>
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Beans.BProducto" %>
+<%@ page import="pe.edu.pucp.iweb.teledrugs.Daos.ClienteDao" %>
 <!DOCTYPE html>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%ArrayList<BFarmacia> listafarmacias = (ArrayList) session.getAttribute("listafarmacias");%>
 <%BFarmacia bFarmacia2 = session.getAttribute("farmacia") == null ? null : (BFarmacia) session.getAttribute("farmacia");%>

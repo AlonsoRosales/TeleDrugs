@@ -6,17 +6,26 @@ public class DTOPedidoCliente {
     private String estado;
     private double resumenPago;
     private String farmacia;
+    private int numeroOrden;
+    private String fecha;
 
-    public DTOPedidoCliente(int numeroOrden, int cantidad, String estado, double resumenPago, String farmacia) {
+    public DTOPedidoCliente(int numeroOrden, int cantidad, String estado, double resumenPago, String farmacia,String fecha) {
         this.numeroOrden = numeroOrden;
         this.cantidad = cantidad;
         this.estado = estado;
         this.resumenPago = resumenPago;
         this.farmacia = farmacia;
+        this.fecha=fecha;
     }
 
-    private int numeroOrden;
 
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
     public int getNumeroOrden() {
         return numeroOrden;
     }
