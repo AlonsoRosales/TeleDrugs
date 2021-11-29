@@ -10,8 +10,7 @@ public class DTOCarritoCliente {
     private double precio;
     private String foto;
 
-    public DTOCarritoCliente(int idcarrito, String producto, String codigo, String stock, int cantidad, double precio,String foto) {
-        this.idcarrito = idcarrito;
+    public DTOCarritoCliente(String producto, String codigo, String stock, int cantidad, double precio,String foto) {
         this.producto = producto;
         this.codigo = codigo;
         this.stock = stock;

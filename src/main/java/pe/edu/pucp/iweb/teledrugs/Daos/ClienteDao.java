@@ -261,7 +261,7 @@ public class ClienteDao  extends BaseDao{
 
         nombre = nombre.toLowerCase();
 
-        String sql = "SELECT p.nombre,p.descripcion,p.foto,p.precio,p.idProducto FROM producto p INNER JOIN farmacia f ON f.ruc = p.farmacia_ruc WHERE f.ruc = ? AND lower(p.nombre) LIKE ?;";
+        String sql = "SELECT p.nombre,p.descripcion,p.foto,p.precio,p.idProducto FROM producto p INNER JOIN farmacia f ON f.ruc = p.farmacia_ruc WHERE f.ruc = ? AND lower(p.nombre) LIKE ? ORDER BY p.nombre;";
 
 
         try (Connection conn = DriverManager.getConnection(url, user, password);

@@ -3,10 +3,8 @@
 <%@ page import="pe.edu.pucp.iweb.teledrugs.DTO.DTOCarritoCliente" %>
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%String correo = (String) request.getAttribute("correo");%>
-<%ArrayList<DTOCarritoCliente> listaCarrito = (ArrayList) request.getAttribute("listaCarrito");%>
-<%BFarmacia bFarmacia2 = (BFarmacia) request.getAttribute("farmacia");%>
-<%ArrayList<BFarmacia> listafarmacias = (ArrayList) request.getAttribute("listafarmacias");%>
+<%ArrayList<DTOCarritoCliente> listaCarrito = session.getAttribute("carrito") != null ? (ArrayList) session.getAttribute("carrito") : new ArrayList<>();%>
+<%ArrayList<BFarmacia> listafarmacias = (ArrayList) session.getAttribute("listafarmacias");%>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -30,14 +28,14 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link" aria-current="page" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&ruc=<%=bFarmacia2.getRuc()%>">Pagina principal</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=historialPedidos&ruc=<%=bFarmacia2.getRuc()%>">Estado de pedido</a></li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="<%=request.getContextPath()%>/Usuario">Pagina principal</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/Usuario?opcion=historialPedidos">Estado de pedido</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Farmacias</a>
                             <ul class="dropdown-menu" style="height: 200px;width: 300px;" aria-labelledby="navbarDropdown">
                                 <div style="text-align: center; margin-top: 20px;"><h4 class="form-title">ELEGIR FARMACIA</h4></div>
                                 <div class="modal-body">
-                                    <form method="post" action="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=mostrarFarmacia" class= "register-form">
+                                    <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=mostrarFarmacia" class= "register-form">
                                         <div style="margin-bottom: 20px; display: flex; justify-content: center;" class="form-group">
                                             <select class="form-control form-select-sm" name="ruc">
                                                 <%for (BFarmacia bFarmacia : listafarmacias){%>
@@ -64,12 +62,12 @@
 						  </a>
 
 						  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                              <li><a href="<%= request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=mostrarPerfil&ruc=<%=bFarmacia2.getRuc()%>" class="dropdown-item" >Ver perfil</a></li>
+                              <li><a href="<%= request.getContextPath()%>/Usuario?opcion=mostrarPerfil&" class="dropdown-item" >Ver perfil</a></li>
                               <li><a href="<%= request.getContextPath()%>" class="dropdown-item" >Cerrar sesión</a></li>
 						  </ul>
 						</div>
 
-                    <form method="post" action="<%= request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=carrito&ruc=<%=bFarmacia2.getRuc()%>">
+                    <form method="post" action="<%= request.getContextPath()%>/Usuario?&opcion=carrito">
                         <form class="d-flex">
                             <button class="btn btn-outline-dark" type="submit">
                                 <i class="bi-cart-fill me-1"></i>
@@ -92,11 +90,12 @@
                     <th>Productos</th>
                     <th class="text-center">Cantidad</th>
                     <th class="text-center">Precio</th>
-                    <th class="text-center"><a class="btn btn-sm btn-outline-danger" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=limpiarcarrito&ruc=<%=bFarmacia2.getRuc()%>">Limpiar Carrito</a></th>
+                    <th class="text-center"><a class="btn btn-sm btn-outline-danger" href="<%=request.getContextPath()%>/Usuario?opcion=limpiarcarrito">Limpiar Carrito</a></th>
 					<th class="text-center">Receta</th>
                 </tr>
             </thead>
             <tbody>
+            <%int i=0;%>
             <%for(DTOCarritoCliente bCarritoCliente : listaCarrito){%>
             <tr>
                 <td>
@@ -127,18 +126,24 @@
 							</div>
 						  </div>
 						</div>
-						<a class="remove-from-cart" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=borraruno&ruc=<%=bFarmacia2.getRuc()%>&idcarrito=<%=bCarritoCliente.getIdcarrito()%>"><i class="bi bi-trash"></i></a>
+                        <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=borraruno">
+                            <input name="idcarrito" value="<%=i%>" type="hidden"/>
+                            <button  class="btn btn-outline-danger flex-shrink-0" type="submit">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
 					</td>
 					<td class="text-center"><a><label for="files" class="btn btn-primary">Subir receta médica</label>
 							<input id="files" style="visibility:hidden; position:absolute" type="file"></a>
 					</td>
                 </tr>
+                <%i=i+1;%>
             <%}%>
             </tbody>
         </table>
         <div class="shopping-cart-footer">
             <div class="column">
-                <a class="btn btn-success" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=historialPedidos&ruc=<%=bFarmacia2.getRuc()%>">Comprar</a>
+                <a class="btn btn-success" href="<%=request.getContextPath()%>/Usuario?opcion=historialPedidos">Comprar</a>
             </div>
         </div>
     </div>

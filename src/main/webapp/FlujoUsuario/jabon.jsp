@@ -5,9 +5,7 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%ArrayList<DTOBuscarProductoCliente> bBuscarProductoClientes = (ArrayList) request.getAttribute("productos");%>
-<%String correo = (String) request.getAttribute("correo");%>
-<%BFarmacia bFarmacia2 = (BFarmacia) request.getAttribute("farmacia");%>
-<%ArrayList<BFarmacia> listafarmacias = (ArrayList) request.getAttribute("listafarmacias");%>
+<%ArrayList<BFarmacia> listafarmacias = (ArrayList) session.getAttribute("listafarmacias");%>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -31,14 +29,14 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link" aria-current="page" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&ruc=<%=bFarmacia2.getRuc()%>">Pagina principal</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=historialPedidos&ruc=<%=bFarmacia2.getRuc()%>">Estado de pedido</a></li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="<%=request.getContextPath()%>/Usuario">Pagina principal</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/Usuario?opcion=historialPedidos">Estado de pedido</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Farmacias</a>
                             <ul class="dropdown-menu" style="height: 200px;width: 300px;" aria-labelledby="navbarDropdown">
                                         <div style="text-align: center; margin-top: 20px;"><h4 class="form-title">ELEGIR FARMACIA</h4></div>
                                         <div class="modal-body">
-                                            <form method="post" action="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=mostrarFarmacia" class= "register-form">
+                                            <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=mostrarFarmacia" class= "register-form">
                                                 <div style="margin-bottom: 20px; display: flex; justify-content: center;" class="form-group">
                                                     <select class="form-control form-select-sm" name="ruc">
                                                         <%for (BFarmacia bFarmacia : listafarmacias){%>
@@ -62,12 +60,12 @@
 						  </a>
 
 						  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                              <li><a href="<%= request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=mostrarPerfil&ruc=<%=bFarmacia2.getRuc()%>" class="dropdown-item" >Ver perfil</a></li>
+                              <li><a href="<%= request.getContextPath()%>/Usuario?opcion=mostrarPerfil" class="dropdown-item" >Ver perfil</a></li>
                               <li><a href="<%= request.getContextPath()%>" class="dropdown-item" >Cerrar sesión</a></li>
 						  </ul>
 						</div>
 
-                    <form method="post" action="<%= request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=carrito&ruc=<%=bFarmacia2.getRuc()%>">
+                    <form method="post" action="<%= request.getContextPath()%>/Usuario?opcion=carrito">
                         <form class="d-flex">
                             <button class="btn btn-outline-dark" type="submit">
                                 <i class="bi-cart-fill me-1"></i>
@@ -80,28 +78,42 @@
             </div>
         </nav>
         <!-- Product section-->
+
+
         <section class="py-5">
-		<div style="text-align: center; margin-bottom: 30px">
-			<h1 >Lleva tus medicamentos a bajo precio</h1>
-				</div>
-            <form method="post" action="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=Buscar&ruc=<%=bFarmacia2.getRuc()%>">
+            <h1 style="text-align: center; margin-bottom: 30px;"> BUSCA LO QUE TU KIERAS MY KING </h1>
+            <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=Buscar">
                 <div class = "box">
                     <input  type="text" name="search" placeholder="Buscar producto" class="src" autocomplete = "off">
                 </div>
             </form>
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="row gx-4 gx-lg-5 align-items-center">
-                    <% for (DTOBuscarProductoCliente productoCliente : bBuscarProductoClientes) { %>
-                        <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="<%=productoCliente.getFoto()%>" alt="..." /></div>
-                        <div class="col-md-6">
-                            <a style=" text-decoration: none; color: #1a1e21" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=mostrarProducto&ruc=<%=bFarmacia2.getRuc()%>&idProducto=<%=productoCliente.getIdProducto()%>"><h1><%=productoCliente.getNombre()%></h1></a>
-                            <div class="fs-5 mb-5">
-                                <!--<span class="text-decoration-line-through">$45.00</span> -->
-                                <span style="font-size:20px;"><b>Precio: </b>S/.<%=productoCliente.getPrecio()%></span>
-                                <br>
-                                <span style="font-size:20px;" ><b>Descripcion: </b><%=productoCliente.getDescripcion()%> </span>
+            <div class="container px-4 px-lg-5 mt-5" style="margin-top: 0px">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    <%for(DTOBuscarProductoCliente bProducto : bBuscarProductoClientes){%>
+                    <div class="col mb-5">
+                        <div class="card h-100" style="display: flex; align-content: center; align-items: center;">
+                            <!-- Sale badge-->
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">En venta</div>
+                            <!-- Product image-->
+                            <img style="height: 206px; width: 206px;" class="card-img-top" src="<%=bProducto.getFoto()%>" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder"><%=bProducto.getNombre()%></h5>
+                                    <!-- Product price-->
+                                    S/. <%=bProducto.getPrecio()%>
+                                </div>
                             </div>
+                            <!-- Product actions-->
+                            <form class="mb-5" method="post" action="<%=request.getContextPath()%>/Usuario?opcion=mostrarProducto">
+                                <input name="idProducto" value="<%=bProducto.getIdProducto()%>" type="hidden"/>
+                                <button  class="btn btn-outline-dark flex-shrink-0" type="submit">
+                                    Ver detalle
+                                </button>
+                            </form>
                         </div>
+                    </div>
                     <%}%>
                 </div>
             </div>
@@ -116,7 +128,6 @@
                         <a class="page-link" href="#">Next</a>
                     </li>
                 </ul>
-                <a style="margin-top:20px; width:200px; float:right; "  class="btn btn-secondary justify-content-right" href="RegistroProductos.jsp">Regresar</a>
             </nav>
         </div>
         <!-- Related items section-->

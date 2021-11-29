@@ -7,7 +7,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%ArrayList<BFarmacia> listafarmacias = (ArrayList) session.getAttribute("listafarmacias");%>
-<%BFarmacia bFarmacia2 = (BFarmacia) session.getAttribute("farmacia");%>
+<%BFarmacia bFarmacia2 = session.getAttribute("farmacia") == null ? null : (BFarmacia) session.getAttribute("farmacia");%>
 <%ArrayList<BProducto> listaProducto = (ArrayList) session.getAttribute("listaProducto");%>
 <html lang="en">
     <head>
@@ -54,8 +54,8 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link" aria-current="page" href="<%=request.getContextPath()%>/Usuario?ruc=<%=bFarmacia2.getRuc()%>">Pagina principal</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/Usuario?opcion=historialPedidos&ruc=<%=bFarmacia2.getRuc()%>">Estado de pedido</a></li>
+                        <li class="nav-item"><a class="nav-link" aria-current="page" href="<%=request.getContextPath()%>/Usuario">Pagina principal</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/Usuario?opcion=historialPedidos">Estado de pedido</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Farmacias</a>
                             <ul class="dropdown-menu" style="height: 200px;width: 300px;" aria-labelledby="navbarDropdown">
@@ -84,12 +84,12 @@
 						  </a>
 
 						  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-							<li><a href="<%= request.getContextPath()%>/Usuario?opcion=mostrarPerfil&ruc=<%=bFarmacia2.getRuc()%>" class="dropdown-item" >Ver perfil</a></li>
+							<li><a href="<%= request.getContextPath()%>/Usuario?opcion=mostrarPerfil" class="dropdown-item" >Ver perfil</a></li>
 							<li><a href="<%= request.getContextPath()%>" class="dropdown-item" >Cerrar sesión</a></li>
 						  </ul>
 						</div>
 
-                    <form method="post" action="<%= request.getContextPath()%>/Usuario?opcion=carrito&ruc=<%=bFarmacia2.getRuc()%>">
+                    <form method="post" action="<%= request.getContextPath()%>/Usuario?opcion=carrito">
                         <form class="d-flex">
                             <button class="btn btn-outline-dark" type="submit">
                                 <i class="bi-cart-fill me-1"></i>
@@ -110,7 +110,7 @@
                     <p class="lead fw-normal text-white-50 mb-0">El mejor lugar para comprar</p>
                 </div>
             </div>
-            <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=Buscar&ruc=<%=bFarmacia2.getRuc()%>">
+            <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=Buscar">
                 <div class = "box">
                     <input  type="text" name="search" placeholder="Buscar producto" class="src" autocomplete = "off">
                 </div>
@@ -123,7 +123,7 @@
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     <%for(BProducto bProducto : listaProducto){%>
                     <div class="col mb-5">
-                        <div class="card h-100">
+                        <div class="card h-100" style="display: flex; align-content: center; align-items: center;">
                             <!-- Sale badge-->
                             <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">En venta</div>
                             <!-- Product image-->
@@ -134,14 +134,16 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder"><%=bProducto.getNombre()%></h5>
                                     <!-- Product price-->
-                                    <span class="text-muted text-decoration-line-through"><%=bProducto.getPrecio() + 0.2*bProducto.getPrecio()%></span>
-                                    <%=bProducto.getPrecio()%>
+                                    S/. <%=bProducto.getPrecio()%>
                                 </div>
                             </div>
                             <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="<%=request.getContextPath()%>/Usuario?opcion=mostrarProducto&ruc=<%=bFarmacia2.getRuc()%>&idProducto=<%=bProducto.getIdProducto()%>">Ver detalle</a></div>
-                            </div>
+                            <form class="mb-5" method="post" action="<%=request.getContextPath()%>/Usuario?opcion=mostrarProducto">
+                                <input name="idProducto" value="<%=bProducto.getIdProducto()%>" type="hidden"/>
+                                <button  class="btn btn-outline-dark flex-shrink-0" type="submit">
+                                    Ver detalle
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <%}%>
