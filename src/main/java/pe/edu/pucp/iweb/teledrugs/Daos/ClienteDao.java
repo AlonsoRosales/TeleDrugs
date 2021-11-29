@@ -361,7 +361,7 @@ public class ClienteDao {
         }
         return existe;
     }
-    public ArrayList<DTOCarritoCliente> buscarCarrito(String ruc){
+   /* public ArrayList<DTOCarritoCliente> buscarCarrito(String ruc){
         ArrayList<DTOCarritoCliente> listaCarrito = new ArrayList<>();
         String sqlselect="SELECT * FROM carrito";
         try(Connection conn = DriverManager.getConnection(url,user,password);
@@ -379,8 +379,8 @@ public class ClienteDao {
             e.printStackTrace();
         }
         return listaCarrito;
-    }
-    public void borrarCarrito(){
+    }*/
+    /*public void borrarCarrito(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -409,5 +409,5 @@ public class ClienteDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

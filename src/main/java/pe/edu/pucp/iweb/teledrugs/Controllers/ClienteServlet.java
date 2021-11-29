@@ -19,69 +19,63 @@ import java.util.ArrayList;
 public class ClienteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        //Objetos
-        BFarmacia bFarmacia = new BFarmacia();
+
+        HttpSession session = request.getSession();
+        BCliente bCliente = (BCliente) session.getAttribute("usuario");
         ClienteDao clienteDao = new ClienteDao();
         FarmaciaDao farmaciaDao= new FarmaciaDao();
         ArrayList<DTOCarritoCliente> bCarritoCliente;
         //Requests
         String opcion = request.getParameter("opcion") != null ? request.getParameter("opcion") : "salir";
-        String correo = request.getParameter("correo") != null ? request.getParameter("correo") : "salir";
         String ruc = request.getParameter("ruc");
 
-        if (ruc != null){
-            ArrayList<BProducto> listarProductos = farmaciaDao.listarProductos(ruc);
-            request.setAttribute("listaProducto",listarProductos);
-            bFarmacia=farmaciaDao.mostrarFarmacia(ruc);
-        }
-        //Atributos
-        request.setAttribute("farmacia",bFarmacia);
-        request.setAttribute("correo",correo);
-        request.setAttribute("listafarmacias",farmaciaDao.mostrarListaFarmacias());
 
+        //Atributos
         switch (opcion) {
             case "mostrarPerfil":
-                BCliente bCliente = clienteDao.mostrarPerfil(correo);
-                request.setAttribute("Perfil",bCliente);
                 RequestDispatcher view = request.getRequestDispatcher("/FlujoUsuario/profile.jsp");
                 view.forward(request, response);
                 break;
             case "historialPedidos":
-                String dni =  clienteDao.DNI(correo);
+                String dni =  clienteDao.DNI(bCliente.getLogueoCorreo());
                 ArrayList<DTOPedidoCliente> pedidos = clienteDao.mostrarHistorial(dni);
-                request.setAttribute("listaPedidos",pedidos);
+                session.setAttribute("listaPedidos",pedidos);
                 RequestDispatcher view2 = request.getRequestDispatcher("/FlujoUsuario/historial.jsp");
                 view2.forward(request, response);
                 break;
             case "mostrarProducto":
                 int idProducto =Integer.parseInt(request.getParameter("idProducto"));
-                request.setAttribute("producto", clienteDao.buscarProductoporId(ruc,idProducto));
+                session.setAttribute("producto", clienteDao.buscarProductoporId(ruc,idProducto));
                 RequestDispatcher view7 = request.getRequestDispatcher("/FlujoUsuario/paracetamol.jsp");
                 view7.forward(request, response);
                 break;
             case "carrito":
-                bCarritoCliente = clienteDao.buscarCarrito(ruc);
-                request.setAttribute("listaCarrito",bCarritoCliente);
+                //bCarritoCliente = clienteDao.buscarCarrito(ruc);
+                //request.setAttribute("listaCarrito",bCarritoCliente);
                 RequestDispatcher view8 = request.getRequestDispatcher("/FlujoUsuario/shopping_cart.jsp");
                 view8.forward(request, response);
                 break;
             case "limpiarcarrito":
-                clienteDao.borrarCarrito();
-                bCarritoCliente = clienteDao.buscarCarrito(ruc);
-                request.setAttribute("listaCarrito",bCarritoCliente);
+                //clienteDao.borrarCarrito();
+                //bCarritoCliente = clienteDao.buscarCarrito(ruc);
+                //request.setAttribute("listaCarrito",bCarritoCliente);
                 RequestDispatcher view9 = request.getRequestDispatcher("/FlujoUsuario/shopping_cart.jsp");
                 view9.forward(request, response);
                 break;
             case "borraruno":
                 String idcarrito =request.getParameter("idcarrito") != null ? request.getParameter("idcarrito") : "0";
                 System.out.println(idcarrito);
-                clienteDao.borrarCarritoporId(Integer.parseInt(idcarrito));
-                bCarritoCliente = clienteDao.buscarCarrito(ruc);
-                request.setAttribute("listaCarrito",bCarritoCliente);
+                //clienteDao.borrarCarritoporId(Integer.parseInt(idcarrito));
+                //bCarritoCliente = clienteDao.buscarCarrito(ruc);
+                //request.setAttribute("listaCarrito",bCarritoCliente);
                 RequestDispatcher view10 = request.getRequestDispatcher("/FlujoUsuario/shopping_cart.jsp");
                 view10.forward(request, response);
                 break;
             case "salir":
+                if (ruc != null){
+                    ArrayList<BProducto> listarProductos = farmaciaDao.listarProductos(ruc);
+                    session.setAttribute("listaProducto",listarProductos);
+                }
                 RequestDispatcher view1 = request.getRequestDispatcher("/FlujoUsuario/homepage.jsp");
                 view1.forward(request, response);
                 break;
@@ -90,36 +84,30 @@ public class ClienteServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession();
+        BCliente bCliente = (BCliente) session.getAttribute("usuario");
 
         String opcion = request.getParameter("opcion") != null ? request.getParameter("opcion") : "salir";
-        String correo = request.getParameter("correo") != null ? request.getParameter("correo") : "salir";
         String ruc = request.getParameter("ruc");
 
 
-        request.setAttribute("correo",correo);
         ClienteDao clienteDao = new ClienteDao();
         FarmaciaDao farmaciaDao= new FarmaciaDao();
 
-        BFarmacia bFarmacia = new BFarmacia();
-        if (ruc != null){
-            bFarmacia=farmaciaDao.mostrarFarmacia(ruc);
-        }
-        //Atributos
-        request.setAttribute("farmacia",bFarmacia);
 
-        request.setAttribute("listafarmacias",farmaciaDao.mostrarListaFarmacias());
+        //Atributos
         switch (opcion) {
             case "Update":
                 String nombre = request.getParameter("Nombres") != null ? request.getParameter("Nombres") : "";
                 String apellidos = request.getParameter("Apellidos") != null ? request.getParameter("Apellidos") : "";
                 String distrito = request.getParameter("Distrito") != null ? request.getParameter("Distrito") : "";
-                clienteDao.updatePerfil(nombre, apellidos, distrito, correo);
-                response.sendRedirect(request.getContextPath() + "/Usuario?correo=" + correo + "&opcion=mostrarPerfil&ruc="+ruc);
+                clienteDao.updatePerfil(nombre, apellidos, distrito, bCliente.getLogueoCorreo());
+                response.sendRedirect(request.getContextPath() + "/Usuario?opcion=mostrarPerfil");
                 break;
             case "Buscar":
                 String texto = request.getParameter("search");
                 if (texto.equalsIgnoreCase("")) {
-                    response.sendRedirect(request.getContextPath() + "/Usuario?correo=" + correo + "&opcion=salir&ruc="+ruc);
+                    response.sendRedirect(request.getContextPath() + "/Usuario?opcion=salir");
                 } else {
                     request.setAttribute("productos", clienteDao.buscarProducto(ruc,texto));
                     request.setAttribute("BuscarProducto", texto);
@@ -136,12 +124,18 @@ public class ClienteServlet extends HttpServlet {
                     cantidad2=cantidad2*bBuscarProductoCliente.getPrecio();
                     clienteDao.agregarAlCarrito(cantidad,idProducto,bBuscarProductoCliente.getStock(),String.valueOf(cantidad2));
                 }
-                response.sendRedirect(request.getContextPath() + "/Usuario?correo=" + correo + "&opcion=carrito&ruc="+ruc);
+                response.sendRedirect(request.getContextPath() + "/Usuario?opcion=carrito");
                 break;
             case "mostrarFarmacia":
-                response.sendRedirect(request.getContextPath()+"/Usuario?correo=" + correo + "&opcion=salir&ruc="+ruc);
+                BFarmacia bFarmacia = new BFarmacia();
+                if (ruc != null){
+                    bFarmacia=farmaciaDao.mostrarFarmacia(ruc);
+                }
+                session.setAttribute("farmacia",bFarmacia);
+                System.out.println("HOla");
+                session.setAttribute("listafarmacias",farmaciaDao.mostrarListaFarmacias());
+                response.sendRedirect(request.getContextPath()+"/Usuario?opcion=salir");
                 break;
-
         }
 
     }

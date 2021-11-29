@@ -3,8 +3,7 @@
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%BCliente bCliente = (BCliente) request.getAttribute("Perfil");%>
-<%String correo = (String) request.getAttribute("correo");%>
+<%BCliente bCliente = (BCliente) session.getAttribute("usuario");%>
 <%BFarmacia bFarmacia2 = (BFarmacia) request.getAttribute("farmacia");%>
 <%ArrayList<BFarmacia> listafarmacias = (ArrayList) request.getAttribute("listafarmacias");%>
 <html lang="es">
