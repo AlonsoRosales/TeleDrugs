@@ -100,6 +100,32 @@ public class FarmaciaDao extends BaseDao {
         return listaFarmacias;
     }
 
+    public ArrayList<BFarmacia> mostrarListaFarmaciasTotal(){
+
+        ArrayList<BFarmacia> listaFarmacias = new ArrayList<>();
+        String sql ="SELECT f.ruc, f.nombre, f.logueo_correo, f.distrito,f.pedidosPendientes,f.bloqueado,f.direccion from farmacia f";
+        try(Connection conn = this.getConnection();
+            Statement stmt = conn.createStatement();){
+
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                String ruc = rs.getString(1);
+                String nombre = rs.getString(2);
+                String correo = rs.getString(3);
+                String distrito =  rs.getString(4);
+                String pedidosPendientes1 = rs.getString(5);
+                String bloqueado= rs.getString(6);
+                String direccion = rs.getString(7);
+                BFarmacia f = new BFarmacia(ruc, nombre,correo, distrito,bloqueado,pedidosPendientes1,direccion);
+                listaFarmacias.add(f);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return listaFarmacias;
+    }
+
+
     public BFarmacia mostrarFarmacia(String ruc){
 
         BFarmacia bFarmacia = null;
@@ -311,6 +337,7 @@ public class FarmaciaDao extends BaseDao {
                 String pedidosPendientes = rs.getString(6);
                 String logueo_correo = rs.getString(7);
                 farmacia = new BFarmacia(ruc,nombre,direccion,distrito,bloqueado,pedidosPendientes,logueo_correo);
+
 
             }
         } catch (SQLException throwables) {

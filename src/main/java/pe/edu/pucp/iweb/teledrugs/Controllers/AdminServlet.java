@@ -20,13 +20,19 @@ public class AdminServlet extends HttpServlet {
         FarmaciaDao farmaciaDao = new FarmaciaDao() ;
         if(busqueda.equals("")){
             ArrayList<BFarmacia> listaFarmacias = farmaciaDao.mostrarListaFarmacias_offset(offset);
-            ArrayList<BFarmacia> listaFarmaciasTotal = farmaciaDao.mostrarListaFarmacias();
+            ArrayList<BFarmacia> listaFarmaciasTotal = farmaciaDao.mostrarListaFarmaciasTotal();
             request.setAttribute("listaFarmacias",listaFarmacias);
             request.setAttribute("pag",Integer.parseInt(offset));
             System.out.println(Integer.parseInt(offset));
             System.out.println("Tamaño de lista de farmacias "+ listaFarmaciasTotal.size());
-            request.setAttribute("index",listaFarmaciasTotal.size()/4+1);
-            System.out.println("Index = "+ listaFarmaciasTotal.size()/4+1);
+            int index;
+            if(listaFarmaciasTotal.size()%4==0){
+                index=listaFarmaciasTotal.size()/4;
+            }else{
+                index=listaFarmaciasTotal.size()/4+1;
+            }
+            request.setAttribute("index",index);
+            System.out.println("Index = "+ index);
             RequestDispatcher view = request.getRequestDispatcher("FlujoAdministrador/Listafarmacias/Listafarmacias.jsp");
             view.forward(request,response);
 
