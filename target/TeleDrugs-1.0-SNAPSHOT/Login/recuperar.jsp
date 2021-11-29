@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!--jsp:useBean type="java.lang.String" scope="session" id="msg" class="java.lang.String"/-->
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Recuperar contraseña</title>
+    <title>Recuperar contraseña - TeleDrugs</title>
 
     <!-- Font Icon -->
     <link href="Login/fonts/material-icon/css/material-design-iconic-font.min.css" rel="stylesheet" >
@@ -16,10 +18,15 @@
 <body>
 
     <div class="main">
-
         <!-- Recover password -->
         <section class="signup">
             <div class="container">
+                <% if (session.getAttribute("err") != null) {%>
+                <div class="alert alert-success" role="alert" >
+                    <%=(String) session.getAttribute("err")%>
+                </div>
+                <% session.removeAttribute("err"); %>
+                <% } %>
                 <div class="signup-content" style="height:400px;">
                     <div class="signup-form">
                         <h2 style="text-align:center;" class="form-title">Recuperar contraseña</h2>
