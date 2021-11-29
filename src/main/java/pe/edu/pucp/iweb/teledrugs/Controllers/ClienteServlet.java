@@ -79,6 +79,7 @@ public class ClienteServlet extends HttpServlet {
         BCliente bCliente = (BCliente) session.getAttribute("usuario");
 
         String opcion = request.getParameter("opcion") != null ? request.getParameter("opcion") : "salir";
+        ArrayList<DTOCarritoCliente> carritoClientes = session.getAttribute("carrito") == null ? new ArrayList<>() : (ArrayList) session.getAttribute("carrito");
         String ruc=null;
 
 
@@ -107,7 +108,6 @@ public class ClienteServlet extends HttpServlet {
                 }
                 break;
             case "carrito":
-                ArrayList<DTOCarritoCliente> carritoCliente = session.getAttribute("carrito") == null ? new ArrayList<>() : (ArrayList) session.getAttribute("carrito");
                 String cantidad = request.getParameter("cantidad") != null ? request.getParameter("cantidad") : "0";
                 String idProducto = (String) session.getAttribute("idProducto");
                 ruc =  session.getAttribute("farmacia") == null ? null : ((BFarmacia) session.getAttribute("farmacia")).getRuc() ;
@@ -115,8 +115,8 @@ public class ClienteServlet extends HttpServlet {
                     DTOBuscarProductoCliente b = clienteDao.buscarProductoporId(ruc, Integer.parseInt(idProducto));
                     double cantidad2 = Integer.parseInt(cantidad);
                     cantidad2 = cantidad2 * b.getPrecio();
-                    carritoCliente.add(new DTOCarritoCliente(b.getNombre(),String.valueOf(b.getIdProducto()),b.getStock(),Integer.parseInt(cantidad),cantidad2,b.getFoto()));
-                    session.setAttribute("carrito",carritoCliente);
+                    carritoClientes.add(new DTOCarritoCliente(b.getNombre(),String.valueOf(b.getIdProducto()),b.getStock(),Integer.parseInt(cantidad),cantidad2,b.getFoto()));
+                    session.setAttribute("carrito",carritoClientes);
                 }
                 response.sendRedirect(request.getContextPath() + "/Usuario?opcion=carrito");
                 break;
@@ -137,10 +137,16 @@ public class ClienteServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath()+"/Usuario?opcion=mostrarProducto");
                 break;
             case "borraruno":
-                ArrayList<DTOCarritoCliente> carritoClientes = session.getAttribute("carrito") == null ? new ArrayList<>() : (ArrayList) session.getAttribute("carrito");
                 System.out.println(request.getParameter("idcarrito"));
                 carritoClientes.remove(Integer.parseInt(request.getParameter("idcarrito")));
                 response.sendRedirect(request.getContextPath()+"/Usuario?opcion=carrito");
+                break;
+            case "comprar":
+                String fecha = request.getParameter("fecha");
+                String hora = request.getParameter("hora") + ":00";
+                clienteDao.crearPedido(carritoClientes, fecha , hora, bCliente.getDNI());
+                session.removeAttribute("carrito");
+                response.sendRedirect(request.getContextPath()+"/Usuario?opcion=historialPedidos");
                 break;
         }
 

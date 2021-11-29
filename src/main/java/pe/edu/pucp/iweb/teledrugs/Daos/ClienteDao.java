@@ -186,7 +186,7 @@ public class ClienteDao  extends BaseDao{
                 "INNER JOIN producto_tiene_pedidos pt ON pt.pedidos_numeroOrden=p.numeroOrden\n" +
                 "INNER JOIN producto pr ON pr.idProducto=pt.producto_idProducto\n" +
                 "INNER JOIN farmacia f ON pr.farmacia_ruc = f.ruc\n" +
-                "WHERE p.usuarioDni = ? GROUP BY p.numeroOrden;";
+                "WHERE p.usuarioDni = ? GROUP BY p.numeroOrden ORDER BY p.numeroOrden";
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, DNI);
@@ -384,6 +384,31 @@ public class ClienteDao  extends BaseDao{
             throwables.printStackTrace();
         }
         return existe;
+    }
+
+    public void crearPedido(ArrayList<DTOCarritoCliente> dtoCarritoClientes,String fecha,String hora,String dni){
+        String sql = "INSERT INTO pedidos(fechaRecojo,estado,usuarioDni) VALUES(?,'Pendiente',?)";
+        try(Connection conn = this.getConnection();
+        PreparedStatement pstmt =conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);) {
+            pstmt.setString(1,fecha +" "+ hora);
+            pstmt.setString(2,dni);
+            pstmt.executeUpdate();
+            try (ResultSet rs = pstmt.getGeneratedKeys()){
+                rs.next();
+                int key = rs.getInt(1);
+                String sql2 = "INSERT INTO producto_tiene_pedidos(pedidos_numeroOrden,producto_idProducto,cantidad) VALUES (?,?,?)";
+                for(DTOCarritoCliente carr : dtoCarritoClientes) {
+                    try (PreparedStatement pstmt2 = conn.prepareStatement(sql2)) {
+                        pstmt2.setInt(1,key);
+                        pstmt2.setInt(2,Integer.parseInt(carr.getCodigo()));
+                        pstmt2.setInt(3,carr.getCantidad());
+                        pstmt2.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
    /* public ArrayList<DTOCarritoCliente> buscarCarrito(String ruc){
         ArrayList<DTOCarritoCliente> listaCarrito = new ArrayList<>();

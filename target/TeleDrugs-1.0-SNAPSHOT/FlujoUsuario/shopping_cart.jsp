@@ -142,17 +142,40 @@
             </tbody>
         </table>
         <div class="shopping-cart-footer">
+
+            <!-- Button trigger modal -->
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="display: flex; align-items: center; align-content: center;">
+                    <div class="modal-content">
+                        <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=comprar">
+                        <div style="text-align: center;"><div class="modal-body">
+                                <h4 class="text-center">SELECCIONA LA FECHA</h4>
+                                <input class="form-control-lg mt-2 mb-2" type="date" name="fecha"/>
+
+                                <h4 class="text-center">SELECCIONA LA HORA</h4>
+                                <input class="form-control-lg mt-2 mb-2" type="time" name="hora" min="10:00:00" max="22:00:00"/>
+
+                        </div></div>
+                            <div class="modal-footer" style="outline: none">
+                            <button type="button" class="btn btn-secondary m-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <div class="column">
-                <a class="btn btn-success" href="<%=request.getContextPath()%>/Usuario?opcion=historialPedidos">Comprar</a>
+                <button onclick="" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Comprar
+                </button>
             </div>
         </div>
     </div>
     </div>
 
 </div>
-		
-		
-		
         <!-- Footer-->
         <footer class="py-5 bg-dark">
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
