@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean type="java.util.ArrayList<pe.edu.pucp.iweb.teledrugs.Beans.BFarmacia>" scope="request" id="listaFarmacias"/>
-<jsp:useBean type="java.lang.String" scope="request" id="correo"/>
 <jsp:useBean type="java.lang.Integer"  scope="request"  id="pag" />
 <jsp:useBean type="java.lang.Integer"  scope="request"  id="index" />
 <html lang="en">
@@ -49,18 +48,18 @@
 			<div class="container px-4 px-lg-5 my-5">
 				<div class="text-center text-white">
 					<h1 class="display-4 fw-bolder">Lista de Farmacias</h1>
-					<p class="lead fw-normal text-white-50 mb-0"><%=correo%></p>
+					<p class="lead fw-normal text-white-50 mb-0"><%=session.getAttribute("correo")%></p>
 				</div>
 			</div>
 
-			<form method="post" action="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=correo%>&opcion=Buscar">
+			<form method="post" action="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&opcion=Buscar">
 				<div style="margin-top:30px;"class = "box">
 					<input type="text" name="search" placeholder="Buscar farmacia" class="src" autocomplete = "off">
 				</div>
 			</form>
 
 			<div style="display:flex; align-items:center; justify-content:center; margin-top: 50px; margin-bottom: 15px;">
-				<a class="btn btn-success" href="<%=request.getContextPath()%>/AgregarFarmacia?user=<%=correo%>" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-circle-check" data-toast-title="Your cart" data-toast-message="is updated successfully!" style="width:250px;">Agregar Farmacia</a>
+				<a class="btn btn-success" href="<%=request.getContextPath()%>/AgregarFarmacia?user=<%=session.getAttribute("correo")%>" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-circle-check" data-toast-title="Your cart" data-toast-message="is updated successfully!" style="width:250px;">Agregar Farmacia</a>
 			</div>
 		</header>
 
@@ -81,7 +80,7 @@
 						</tr>
 					</thead>
 					<% int i =0; %>
-					<form method="post" action="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=correo%>&opcion=bloquear&num=<%=listaFarmacias.size()%>">
+					<form method="post" action="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&opcion=bloquear&num=<%=listaFarmacias.size()%>">
 
 							<%for(BFarmacia farmacia: listaFarmacias){ %>
 						<tbody>
@@ -134,25 +133,25 @@
 							<ul class="pagination justify-content-center">
 								<%if (pag==1){%>
 								<li class="page-item disabled">
-									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=correo%>&offset=<%=pag-1%>">Previous</a>
+									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag-1%>">Previous</a>
 								</li>
 								<%}else
 								{%>
 									<li class="page-item">
-									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=correo%>&offset=<%=pag-1%>">Previous</a>
+									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag-1%>">Previous</a>
 									</li>
 								<%}%>
 								<%for (int j=1; j<=index;j++){%>
-								<li class="page-item"><a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=correo%>&offset=<%=j%>"> <%=j%>  </a></li>
+								<li class="page-item"><a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=j%>"> <%=j%>  </a></li>
 								<%}
 								int a=0;
 								if(pag==2){%>
 								<li class="page-item disabled">
-									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=correo%>&offset=<%=pag+1%>">Next</a>
+									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag+1%>">Next</a>
 								</li>
 								<%}else {%>
 								<li class="page-item">
-									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=correo%>&offset=<%=pag+1%>">Next</a>
+									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag+1%>">Next</a>
 									<%}%>
 
 							</ul>

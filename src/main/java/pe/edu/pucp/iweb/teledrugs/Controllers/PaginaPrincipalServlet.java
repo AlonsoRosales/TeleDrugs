@@ -86,10 +86,14 @@ public class PaginaPrincipalServlet extends HttpServlet {
                 //BAdministrador bAdministrador = new BAdministrador();
                 //bAdministrador.setContrasenia(constrasenia);
                 //bAdministrador.setLogueoCorreo(correo);
-
+                HttpSession session = request.getSession();
                 if (rol.equalsIgnoreCase("administrador")) {
-                    response.sendRedirect(request.getContextPath() + "/AdminPrincipal?correo=" + correo);
+                    session.setAttribute("correo", correo);
+                    response.sendRedirect(request.getContextPath() + "/AdminPrincipal");
                 } else if (rol.equalsIgnoreCase("cliente")) {
+                    ClienteDao clienteDao = new ClienteDao();
+                    BCliente cliente = clienteDao.obtenerCliente(correo);
+                    session.setAttribute("usuario", cliente);
                     response.sendRedirect(request.getContextPath() + "/Usuario?correo=" + correo);
                 } else if (rol.equalsIgnoreCase("farmacia")) {
                     response.sendRedirect(request.getContextPath() + "/FarmaciaPrincipal");
@@ -97,6 +101,7 @@ public class PaginaPrincipalServlet extends HttpServlet {
 
             }
             else{
+
                 //MENSAJE DE ERROR MENSAJE DE FEEDBACK
             }
 
