@@ -15,10 +15,7 @@ import java.io.IOException;
 public class AgregarFarmacia extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String user = request.getParameter("user");
         System.out.println("agregar");
-        System.out.println(user);
-        request.setAttribute("usuario",user);
         RequestDispatcher view = request.getRequestDispatcher("/FlujoAdministrador/AgregarFarmacias/AgregarFarmacias.jsp");
         view.forward(request,response);
 
@@ -27,9 +24,7 @@ public class AgregarFarmacia extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String user = request.getParameter("usuario");
         System.out.println("agregar post");
-        System.out.println(user);
 
         String imagenFarmacia = request.getParameter("Imagen");
         String RUCFarmacia = request.getParameter("RUC");
@@ -64,7 +59,7 @@ public class AgregarFarmacia extends HttpServlet {
             else{
                 BFarmacia farmacita = new BFarmacia(RUCFarmacia,nombreFarmacia,direccionFarmacia,distritoFarmacia,imagenFarmacia,correoFarmacia);
                 farmaciaDao.insertarFarmacia(farmacita,contrasenaFarmacia);
-                response.sendRedirect(request.getContextPath() + "/AgregarFarmacia?user="+user);
+                response.sendRedirect(request.getContextPath() + "/AgregarFarmacia");
             }
         }else{
             //ACA SE TENDRIA QUE IMPRIMIR UN MENSAJE DE FEEDBACK DICIENDO QUE EL CAMPO DE RUC ESTA MAL INGRESADO

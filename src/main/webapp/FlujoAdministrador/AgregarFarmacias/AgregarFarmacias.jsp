@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:useBean type="java.lang.String" scope="request" id="usuario"/>
 
 <html>
     <head>
@@ -44,7 +43,7 @@
             <div class="container px-4 px-lg-5 my-5">
                 <div class="text-center text-white">
                     <h1 class="display-4 fw-bolder">Agregar Farmacia</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Administrador <%=usuario%></p>
+                    <p class="lead fw-normal text-white-50 mb-0">Administrador <%=session.getAttribute("correo")%></p>
                 </div>
             </div>
         </header>
@@ -57,7 +56,7 @@
                         <div style="display:flex; justify-content:center; align-items:center; border-radius:10px; border: 2px solid #e1e7ec" class="card h-100">
                             <h1 style="margin-top:20px;"class="display-7 fw-bolder">Farmacia</h1>
                             <!-- Product image-->
-                            <form method="POST" action="<%=request.getContextPath()%>/AgregarFarmacia?usuario=<%=usuario%>">
+                            <form method="POST" action="<%=request.getContextPath()%>/AgregarFarmacia">
                                 <i class="bi bi-camera-fill"style='font-size:30px'></i>
                                 <input type="file" name="Imagen" id="Foto" value="image/*">
                                 <div class="signup-image">
@@ -144,7 +143,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <a style="margin-bottom:20px; margin-top:0px; width:200px; float:left;" onclick="return eliminardatos()" class="btn btn-danger" href="<%=request.getContextPath()%>/AgregarFarmacia?user=<%=usuario%>">Limpiar</a>
+                                    <a style="margin-bottom:20px; margin-top:0px; width:200px; float:left;" onclick="return eliminardatos()" class="btn btn-danger" href="<%=request.getContextPath()%>/AgregarFarmacia">Limpiar</a>
                                     <!--a style="margin-bottom:20px; margin-top:0px; width:200px; float:left;" class="btn btn-danger">Aceptar</a-->
                                     <a style="margin-bottom:20px; margin-top:0px; width:200px; float:right;" class="btn btn-success"  href="#exampleModalToggle" data-bs-toggle="modal" role="button">Aceptar</a>
                                     <!--button style="margin-bottom:20px; margin-top:0px; width:200px; float:right;" class="btn btn-success" href="#exampleModalToggle" data-bs-toggle="modal" >Aceptar</button-->
@@ -154,7 +153,7 @@
                     </div>
                 </div>
             </div>
-            <a style="margin-bottom:20px; margin-right:20px; margin-top:0px; width:200px; float: right;" class="btn btn-secondary" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=usuario%>" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-circle-check" data-toast-title="Your cart" data-toast-message="is updated successfully!" style="width:250px;">Regresar</a>
+            <a style="margin-bottom:20px; margin-right:20px; margin-top:0px; width:200px; float: right;" class="btn btn-secondary" href="<%=request.getContextPath()%>/AdminPrincipal" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-circle-check" data-toast-title="Your cart" data-toast-message="is updated successfully!" style="width:250px;">Regresar</a>
             <!-- <a href="javascript:history.back()"><img src="Imagenes/izquierda.jpg" height="48" width="48" style= "float:right" alt="Botón"</a> -->
             <!--/form-->
         </section>

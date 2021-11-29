@@ -3,7 +3,7 @@ package pe.edu.pucp.iweb.teledrugs.Controllers;
 import pe.edu.pucp.iweb.teledrugs.Daos.ClienteDao;
 
 
-import javax.mail.*;
+/*import javax.mail.*;*/
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.swing.*;
 import java.io.IOException;
 //-------------------------------------------------
-import java.util.Properties;
+/*import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.internet.AddressException;
@@ -22,7 +22,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.swing.JOptionPane;
+import javax.swing.JOptionPane;*/
 //------------------------------------------------
 
 
@@ -60,7 +60,7 @@ public class RecuperarContrasena extends HttpServlet{
                 response.sendRedirect(request.getContextPath() + "/RecuperarContrasena");
             }else{
                 //----------------------------------------------------------------------------------------------------------------------------------------
-                String correo2 = "teledrugs2021@gmail.com";
+               /* String correo2 = "teledrugs2021@gmail.com";
                 String contra = "paeocxrkjrtkcyuy";
                 //String correoDestino = "teledrugs2021@gmail.com";
                 // CONTRASEÑA 16 CARACETERES QUE SE TIENE QUE USAR -> paeocxrkjrtkcyuy
@@ -120,7 +120,7 @@ public class RecuperarContrasena extends HttpServlet{
                 }
 
                 JOptionPane.showMessageDialog(null,"Mensaje enviado");
-
+                */
                 //----------------------------------------------------------------------------------------------------------------------------------------
                 response.sendRedirect(request.getContextPath() +  "/RecuperarContrasena");
             }

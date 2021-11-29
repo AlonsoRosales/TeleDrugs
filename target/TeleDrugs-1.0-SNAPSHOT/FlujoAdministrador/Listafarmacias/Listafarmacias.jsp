@@ -52,14 +52,14 @@
 				</div>
 			</div>
 
-			<form method="post" action="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&opcion=Buscar">
+			<form method="post" action="<%=request.getContextPath()%>/AdminPrincipal?opcion=Buscar">
 				<div style="margin-top:30px;"class = "box">
 					<input type="text" name="search" placeholder="Buscar farmacia" class="src" autocomplete = "off">
 				</div>
 			</form>
 
 			<div style="display:flex; align-items:center; justify-content:center; margin-top: 50px; margin-bottom: 15px;">
-				<a class="btn btn-success" href="<%=request.getContextPath()%>/AgregarFarmacia?user=<%=session.getAttribute("correo")%>" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-circle-check" data-toast-title="Your cart" data-toast-message="is updated successfully!" style="width:250px;">Agregar Farmacia</a>
+				<a class="btn btn-success" href="<%=request.getContextPath()%>/AgregarFarmacia" data-toast="" data-toast-type="success" data-toast-position="topRight" data-toast-icon="icon-circle-check" data-toast-title="Your cart" data-toast-message="is updated successfully!" style="width:250px;">Agregar Farmacia</a>
 			</div>
 		</header>
 
@@ -80,7 +80,7 @@
 						</tr>
 					</thead>
 					<% int i =0; %>
-					<form method="post" action="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&opcion=bloquear&num=<%=listaFarmacias.size()%>">
+					<form method="post" action="<%=request.getContextPath()%>/AdminPrincipal?opcion=bloquear&num=<%=listaFarmacias.size()%>">
 
 							<%for(BFarmacia farmacia: listaFarmacias){ %>
 						<tbody>
@@ -145,7 +145,7 @@
 								<li class="page-item"><a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=j%>"> <%=j%>  </a></li>
 								<%}
 								int a=0;
-								if(pag==2){%>
+								if(pag==index ||index==1){%>
 								<li class="page-item disabled">
 									<a class="page-link" href="<%=request.getContextPath()%>/AdminPrincipal?correo=<%=session.getAttribute("correo")%>&offset=<%=pag+1%>">Next</a>
 								</li>

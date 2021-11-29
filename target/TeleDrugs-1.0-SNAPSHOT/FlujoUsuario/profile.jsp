@@ -2,10 +2,11 @@
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Beans.BFarmacia" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%BCliente bCliente = (BCliente) session.getAttribute("usuario");%>
-<%BFarmacia bFarmacia2 = (BFarmacia) request.getAttribute("farmacia");%>
-<%ArrayList<BFarmacia> listafarmacias = (ArrayList) request.getAttribute("listafarmacias");%>
+<%BFarmacia bFarmacia2 = (BFarmacia) session.getAttribute("farmacia");%>
+<%ArrayList<BFarmacia> listafarmacias = (ArrayList) session.getAttribute("listafarmacias");%>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -28,14 +29,14 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                    <li class="nav-item"><a class="nav-link" aria-current="page" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&ruc=<%=bFarmacia2.getRuc()%>">Pagina principal</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=historialPedidos&ruc=<%=bFarmacia2.getRuc()%>">Estado de pedido</a></li>
+                    <li class="nav-item"><a class="nav-link" aria-current="page" href="<%=request.getContextPath()%>/Usuario?ruc=<%=bFarmacia2.getRuc()%>">Pagina principal</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/Usuario?opcion=historialPedidos&ruc=<%=bFarmacia2.getRuc()%>">Estado de pedido</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Farmacias</a>
                         <ul class="dropdown-menu" style="height: 200px;width: 300px;" aria-labelledby="navbarDropdown">
                             <div style="text-align: center; margin-top: 20px;"><h4 class="form-title">ELEGIR FARMACIA</h4></div>
                             <div class="modal-body">
-                                <form method="post" action="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=mostrarFarmacia" class= "register-form">
+                                <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=mostrarFarmacia" class= "register-form">
                                     <div style="margin-bottom: 20px; display: flex; justify-content: center;" class="form-group">
                                         <select class="form-control form-select-sm" name="ruc">
                                             <%for (BFarmacia bFarmacia : listafarmacias){%>
@@ -58,12 +59,12 @@
                       </a>
 
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                          <li><a href="<%= request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=mostrarPerfil&ruc=<%=bFarmacia2.getRuc()%>" class="dropdown-item" >Ver perfil</a></li>
+                          <li><a href="<%= request.getContextPath()%>/Usuario?opcion=mostrarPerfil&ruc=<%=bFarmacia2.getRuc()%>" class="dropdown-item" >Ver perfil</a></li>
                           <li><a href="<%= request.getContextPath()%>" class="dropdown-item" >Cerrar sesión</a></li>
                       </ul>
                     </div>
 
-                <form method="post" action="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=carrito&ruc=<%=bFarmacia2.getRuc()%>">
+                <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=carrito&ruc=<%=bFarmacia2.getRuc()%>">
                     <form class="d-flex">
                         <button class="btn btn-outline-dark" type="submit">
                             <i class="bi-cart-fill me-1"></i>
@@ -166,7 +167,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                            <form method="post" action="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=Update&ruc=<%=bFarmacia2.getRuc()%>">
+                            <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=Update&ruc=<%=bFarmacia2.getRuc()%>">
                               <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Nombres</label>
                                 <input name="Nombres" type="text" class="form-control" id="recipient-name">
