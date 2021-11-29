@@ -1,5 +1,7 @@
 package pe.edu.pucp.iweb.teledrugs.DTO;
 
+import java.sql.Blob;
+
 public class DTOCarritoCliente {
 
     private int idcarrito;
@@ -9,14 +11,18 @@ public class DTOCarritoCliente {
     private int cantidad;
     private double precio;
     private String foto;
+    private boolean requiereReceta;
+    private String receta;
 
-    public DTOCarritoCliente(String producto, String codigo, String stock, int cantidad, double precio,String foto) {
+    public DTOCarritoCliente(String producto, String codigo, String stock, int cantidad, double precio,String foto,boolean requiereReceta,String receta) {
         this.producto = producto;
         this.codigo = codigo;
         this.stock = stock;
         this.cantidad = cantidad;
         this.precio = precio;
         this.foto = foto;
+        this.requiereReceta=requiereReceta;
+        this.receta=receta;
     }
 
     public String getProducto() {
@@ -74,5 +80,21 @@ public class DTOCarritoCliente {
 
     public void setIdcarrito(int idcarrito) {
         this.idcarrito = idcarrito;
+    }
+
+    public boolean isRequiereReceta() {
+        return requiereReceta;
+    }
+
+    public void setRequiereReceta(boolean requiereReceta) {
+        this.requiereReceta = requiereReceta;
+    }
+
+    public String getReceta() {
+        return receta;
+    }
+
+    public void setReceta(String receta) {
+        this.receta = receta;
     }
 }

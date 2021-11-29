@@ -133,9 +133,15 @@
                             </button>
                         </form>
 					</td>
-					<td class="text-center"><a><label for="files" class="btn btn-primary">Subir receta médica</label>
-							<input id="files" style="visibility:hidden; position:absolute" type="file"></a>
+                <%if(bCarritoCliente.isRequiereReceta()){%>
+                <form method="post" action="<%=request.getContextPath()%>/Usuario?opcion=subirReceta">
+                    <td class="text-center"><a><label for="files" class="btn btn-primary">Subir receta</label>
+                        <input name="imagen" id="files" style="visibility:hidden; position:absolute" type="file"></a>
+                        <input name="idcarrito" value="<%=i%>" type="hidden"/>
+                        <button type="submit">Aceptar</button>
 					</td>
+                </form>
+                <%}%>
                 </tr>
                 <%i=i+1;%>
             <%}%>

@@ -13,6 +13,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.sql.Blob;
 import java.util.ArrayList;
 
 @WebServlet(name = "ClienteServlet", value = "/Usuario")
@@ -28,7 +29,6 @@ public class ClienteServlet extends HttpServlet {
         //Requests
         String opcion = request.getParameter("opcion") != null ? request.getParameter("opcion") : "salir";
         String ruc =  session.getAttribute("farmacia") == null ? null : ((BFarmacia) session.getAttribute("farmacia")).getRuc() ;
-        System.out.println(ruc);
 
         //Atributos
         switch (opcion) {
@@ -38,7 +38,6 @@ public class ClienteServlet extends HttpServlet {
                 break;
             case "historialPedidos":
                 String dni =  clienteDao.DNI(bCliente.getLogueoCorreo());
-                System.out.println(dni);
                 ArrayList<DTOPedidoCliente> pedidos = clienteDao.mostrarHistorial(dni);
                 session.setAttribute("listaPedidos",pedidos);
                 RequestDispatcher view2 = request.getRequestDispatcher("/FlujoUsuario/historial.jsp");
@@ -115,7 +114,7 @@ public class ClienteServlet extends HttpServlet {
                     DTOBuscarProductoCliente b = clienteDao.buscarProductoporId(ruc, Integer.parseInt(idProducto));
                     double cantidad2 = Integer.parseInt(cantidad);
                     cantidad2 = cantidad2 * b.getPrecio();
-                    carritoClientes.add(new DTOCarritoCliente(b.getNombre(),String.valueOf(b.getIdProducto()),b.getStock(),Integer.parseInt(cantidad),cantidad2,b.getFoto()));
+                    carritoClientes.add(new DTOCarritoCliente(b.getNombre(),String.valueOf(b.getIdProducto()),b.getStock(),Integer.parseInt(cantidad),cantidad2,b.getFoto(),b.isRequiereReceta(),null));
                     session.setAttribute("carrito",carritoClientes);
                 }
                 response.sendRedirect(request.getContextPath() + "/Usuario?opcion=carrito");
@@ -133,11 +132,9 @@ public class ClienteServlet extends HttpServlet {
                 break;
             case "mostrarProducto":
                 session.setAttribute("idProducto", request.getParameter("idProducto"));
-                System.out.println(request.getParameter("idProducto"));
                 response.sendRedirect(request.getContextPath()+"/Usuario?opcion=mostrarProducto");
                 break;
             case "borraruno":
-                System.out.println(request.getParameter("idcarrito"));
                 carritoClientes.remove(Integer.parseInt(request.getParameter("idcarrito")));
                 response.sendRedirect(request.getContextPath()+"/Usuario?opcion=carrito");
                 break;
@@ -152,6 +149,12 @@ public class ClienteServlet extends HttpServlet {
                 clienteDao.cancelarPedido(Integer.parseInt(request.getParameter("numeroOrden")));
                 response.sendRedirect(request.getContextPath()+"/Usuario?opcion=historialPedidos");
                 break;
+            case "subirReceta":
+                int idcarrito=Integer.parseInt(request.getParameter("idcarrito"));
+                String blob = request.getParameter("imagen") != null ? request.getParameter("imagen") : null;
+                System.out.println(blob);
+                carritoClientes.get(idcarrito).setReceta(blob);
+                response.sendRedirect(request.getContextPath()+"/Usuario?opcion=carrito");
         }
 
     }

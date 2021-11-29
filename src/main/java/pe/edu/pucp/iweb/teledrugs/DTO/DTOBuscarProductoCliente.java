@@ -9,6 +9,16 @@ public class DTOBuscarProductoCliente {
     private String foto;
     private double precio;
     private String stock;
+    private boolean requiereReceta;
+    public boolean isRequiereReceta() {
+        return requiereReceta;
+    }
+
+    public void setRequiereReceta(boolean requiereReceta) {
+        this.requiereReceta = requiereReceta;
+    }
+
+
 
     public String getStock() {
         return stock;

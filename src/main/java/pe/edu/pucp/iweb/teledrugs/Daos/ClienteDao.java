@@ -295,7 +295,7 @@ public class ClienteDao  extends BaseDao {
 
     public DTOBuscarProductoCliente buscarProductoporId(String ruc, int idProducto) {
         DTOBuscarProductoCliente producto = null;
-        String sql = "SELECT p.nombre,p.descripcion,p.foto,p.precio,p.idProducto,p.stock FROM producto p INNER JOIN farmacia f ON f.ruc = p.farmacia_ruc WHERE f.ruc = ? AND p.idProducto = ?;";
+        String sql = "SELECT p.nombre,p.descripcion,p.foto,p.precio,p.idProducto,p.stock,p.requiereReceta FROM producto p INNER JOIN farmacia f ON f.ruc = p.farmacia_ruc WHERE f.ruc = ? AND p.idProducto = ?;";
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
@@ -311,7 +311,7 @@ public class ClienteDao  extends BaseDao {
             producto.setPrecio(rs.getDouble(4));
             producto.setIdProducto(rs.getInt(5));
             producto.setStock(rs.getString(6));
-
+            producto.setRequiereReceta(rs.getBoolean(7));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -401,12 +401,13 @@ public class ClienteDao  extends BaseDao {
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 rs.next();
                 int key = rs.getInt(1);
-                String sql2 = "INSERT INTO producto_tiene_pedidos(pedidos_numeroOrden,producto_idProducto,cantidad) VALUES (?,?,?)";
+                String sql2 = "INSERT INTO producto_tiene_pedidos(pedidos_numeroOrden,producto_idProducto,cantidad,recetas) VALUES (?,?,?,?)";
                 for (DTOCarritoCliente carr : dtoCarritoClientes) {
                     try (PreparedStatement pstmt2 = conn.prepareStatement(sql2)) {
                         pstmt2.setInt(1, key);
                         pstmt2.setInt(2, Integer.parseInt(carr.getCodigo()));
                         pstmt2.setInt(3, carr.getCantidad());
+                        pstmt2.setString(4, carr.getReceta());
                         pstmt2.executeUpdate();
                     }
                 }
@@ -478,8 +479,8 @@ public class ClienteDao  extends BaseDao {
 
     public String restarFechas(String fecha) {
         String horas = null;
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String fecha_actual= dtf5.format(LocalDateTime.now());
         try
         {
