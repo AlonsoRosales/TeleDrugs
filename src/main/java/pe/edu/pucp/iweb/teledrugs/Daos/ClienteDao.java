@@ -230,6 +230,7 @@ public class ClienteDao {
 
 
 
+
     //FUNCION PARA BUSCAR UN PRODUCTO
 
     public ArrayList<DTOBuscarProductoCliente> buscarProducto(String ruc, String nombre) {

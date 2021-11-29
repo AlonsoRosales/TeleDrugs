@@ -30,6 +30,7 @@ public class ClienteServlet extends HttpServlet {
         String ruc = request.getParameter("ruc");
 
 
+
         //Atributos
         switch (opcion) {
             case "mostrarPerfil":

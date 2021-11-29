@@ -4,6 +4,7 @@
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Daos.FarmaciaDao" %>
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Beans.BProducto" %>
 <!DOCTYPE html>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%ArrayList<BFarmacia> listafarmacias = (ArrayList) session.getAttribute("listafarmacias");%>
 <%BFarmacia bFarmacia2 = (BFarmacia) session.getAttribute("farmacia");%>

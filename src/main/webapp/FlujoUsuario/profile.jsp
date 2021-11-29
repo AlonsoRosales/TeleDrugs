@@ -2,6 +2,7 @@
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Beans.BFarmacia" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%BCliente bCliente = (BCliente) session.getAttribute("usuario");%>
 <%BFarmacia bFarmacia2 = (BFarmacia) session.getAttribute("farmacia");%>
