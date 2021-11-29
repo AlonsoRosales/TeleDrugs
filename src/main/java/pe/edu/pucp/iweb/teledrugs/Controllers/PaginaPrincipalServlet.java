@@ -94,7 +94,7 @@ public class PaginaPrincipalServlet extends HttpServlet {
                     ClienteDao clienteDao = new ClienteDao();
                     BCliente cliente = clienteDao.obtenerCliente(correo);
                     session.setAttribute("usuario", cliente);
-                    response.sendRedirect(request.getContextPath() + "/Usuario?correo=" + correo);
+                    response.sendRedirect(request.getContextPath() + "/Usuario");
                 } else if (rol.equalsIgnoreCase("farmacia")) {
                     response.sendRedirect(request.getContextPath() + "/FarmaciaPrincipal");
                 }
