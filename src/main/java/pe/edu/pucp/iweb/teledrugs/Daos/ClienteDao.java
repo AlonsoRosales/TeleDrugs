@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class ClienteDao {
+public class ClienteDao  extends BaseDao{
     String user = "root";
     String password = "root";
     String url = "jdbc:mysql://localhost:3306/mydb";
@@ -56,7 +56,7 @@ public class ClienteDao {
         String sqlInsert = "INSERT INTO cliente(dni,nombre,apellidos,fecha_nac,distrito,logueo_correo)\n" +
                 "VALUES(?,?,?,?,?,?)";
         if (dniValid(dni) && nombreyApellidoValid(nombre) && nombreyApellidoValid(apellidos) && fechaIsValid(fecha)) {
-            try (Connection conn = DriverManager.getConnection(url, user, password);
+            try (Connection conn = this.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
                 pstmt.setString(2, nombre);
                 pstmt.setString(3, apellidos);
@@ -74,7 +74,7 @@ public class ClienteDao {
     public void registrarCliente(BCliente clientito) {
         String sqlInsert = "INSERT INTO cliente(dni,nombre,apellidos,fecha_nac,distrito,logueo_correo)\n" +
                 "VALUES(?,?,?,?,?,?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = this.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
             pstmt.setString(1,clientito.getDNI());
             pstmt.setString(2,clientito.getNombre());
@@ -87,6 +87,29 @@ public class ClienteDao {
             throwables.printStackTrace();
         }
 
+    }
+    public BCliente obtenerCliente(String correo){
+        BCliente bCliente= new BCliente();
+        String sql = "SELECT c.dni, c.nombre, c.apellidos, c.fecha_nac,c.distrito,c.logueo_correo FROM cliente c  WHERE ? = c.logueo_correo";
+
+        try(Connection conn = this.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1, correo);
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            String dni = rs.getString(1);
+            String nombre = rs.getString(2);
+            String apellidos = rs.getString(3);
+            String fecha_nac = rs.getString(4);
+            String distrito = rs.getString(5);
+            String logueo_correo = rs.getString(6);
+            bCliente= new BCliente(dni,nombre,apellidos,distrito,fecha_nac,logueo_correo);
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return bCliente;
     }
 
 
