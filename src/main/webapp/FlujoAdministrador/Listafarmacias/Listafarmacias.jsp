@@ -97,10 +97,17 @@
 								<td class="text-center text-lg text-medium"><%=farmacia.getDistrito()%></td>
 								<td class="text-center text-lg text-medium"><%=farmacia.getPedidosPendientes()%></td>
 								<td class="text-center">
+									<%if(farmacia.getPedidosPendientes().equalsIgnoreCase("no")){%>
 									<div class="form-check" style="display:flex; align-items:center; justify-content:center">
 										<input class="form-check-input" type="checkbox" value="<%=farmacia.getRuc()%>" name ="check<%=i%>" id="check">
 										<%i=i+1;%>
 									</div>
+									<%}else{%>
+									<div>
+										<p>La farmacia tiene</p>
+										<p>pedidos pendientes</p>
+									</div>
+									<%}%>
 								</td>
 							</tr>
 

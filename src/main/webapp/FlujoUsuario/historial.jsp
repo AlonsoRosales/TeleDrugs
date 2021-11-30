@@ -64,7 +64,7 @@
 
 						  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                               <li><a href="<%= request.getContextPath()%>/Usuario?opcion=mostrarPerfil" class="dropdown-item" >Ver perfil</a></li>
-                              <li><a href="<%= request.getContextPath()%>" class="dropdown-item" >Cerrar sesión</a></li>
+                              <li><a href="<%= request.getContextPath()%>/Usuario?opcion=logout" class="dropdown-item" >Cerrar sesión</a></li>
 						  </ul>
 						</div>
 

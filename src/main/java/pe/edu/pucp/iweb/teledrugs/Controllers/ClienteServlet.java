@@ -74,6 +74,9 @@ public class ClienteServlet extends HttpServlet {
                 RequestDispatcher view1 = request.getRequestDispatcher("/FlujoUsuario/homepage.jsp");
                 view1.forward(request, response);
                 break;
+            case "logout":
+                session.invalidate();
+                response.sendRedirect(request.getContextPath());
 
         }
     }

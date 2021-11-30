@@ -103,6 +103,7 @@ public class PaginaPrincipalServlet extends HttpServlet {
                     ClienteDao clienteDao = new ClienteDao();
                     BCliente cliente = clienteDao.obtenerCliente(correo);
                     session.setAttribute("usuario", cliente);
+                    session.setMaxInactiveInterval(10*60);
                     response.sendRedirect(request.getContextPath() + "/Usuario");
                 } else if (rol.equalsIgnoreCase("farmacia")) {
                     response.sendRedirect(request.getContextPath() + "/FarmaciaPrincipal");
