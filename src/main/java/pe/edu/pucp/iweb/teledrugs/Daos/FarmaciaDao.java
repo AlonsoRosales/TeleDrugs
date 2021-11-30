@@ -2,6 +2,7 @@ package pe.edu.pucp.iweb.teledrugs.Daos;
 
 import pe.edu.pucp.iweb.teledrugs.Beans.BFarmacia;
 import pe.edu.pucp.iweb.teledrugs.Beans.BProducto;
+import pe.edu.pucp.iweb.teledrugs.DTO.DTOBuscarProductoCliente;
 import pe.edu.pucp.iweb.teledrugs.DTO.DTOPedidoHistorial;
 
 import java.sql.*;
@@ -10,10 +11,38 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-
-
 public class FarmaciaDao extends BaseDao {
 
+    public ArrayList<DTOBuscarProductoCliente> buscarProducto(String ruc, String nombre) {
+        ArrayList<DTOBuscarProductoCliente> productos = new ArrayList<>();
+
+        nombre = nombre.toLowerCase();
+
+        String sql = "SELECT p.nombre,p.descripcion,p.foto,p.precio,p.idProducto FROM producto p INNER JOIN farmacia f ON f.ruc = p.farmacia_ruc WHERE f.ruc = ? AND lower(p.nombre) LIKE ?;";
+
+
+        try(Connection conn = this.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);){
+            pstmt.setString(1,ruc);
+            pstmt.setString(2,"%" + nombre + "%");
+
+            try(ResultSet rs = pstmt.executeQuery()){
+                while (rs.next()) {
+                    DTOBuscarProductoCliente producto = new DTOBuscarProductoCliente();
+                    producto.setNombre(rs.getString(1));
+                    producto.setDescripcion(rs.getString(2));
+                    producto.setFoto(rs.getString(3));
+                    producto.setPrecio(rs.getDouble(4));
+                    producto.setIdProducto(rs.getInt(5));
+                    productos.add(producto);
+                }
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return productos;
+    }
 
     public ArrayList<DTOPedidoHistorial> mostrarHistorialPedidos(){
 
@@ -144,6 +173,34 @@ public class FarmaciaDao extends BaseDao {
                 String ruc2 = rs.getString(1);
                 String nombre = rs.getString(2);
                 String correo = rs.getString(3);
+                String distrito =  rs.getString(4);
+                String pedidosPendientes1 = rs.getString(5);
+                String bloqueado= rs.getString(6);
+                String direccion = rs.getString(7);
+                bFarmacia = new BFarmacia(ruc2, nombre,correo, distrito,bloqueado,pedidosPendientes1,direccion);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return bFarmacia;
+    }
+    public BFarmacia mostrarFarmaciaCorreo(String correo){
+
+        BFarmacia bFarmacia = null;
+        String sql ="SELECT f.ruc, f.nombre, l.correo, f.distrito,f.pedidosPendientes,bloqueado,f.direccion FROM farmacia f\n" +
+                "INNER JOIN credenciales l ON l.correo = f.logueo_correo\n" +
+                "INNER JOIN producto p ON p.farmacia_ruc=f.ruc\n" +
+                "LEFT JOIN producto_tiene_pedidos pt ON p.idProducto = pt.producto_idProducto\n" +
+                "WHERE l.correo = ? " +
+                "GROUP BY f.ruc ";
+
+        try(Connection conn = this.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);){
+            pstmt.setString(1,correo);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                String ruc2 = rs.getString(1);
+                String nombre = rs.getString(2);
                 String distrito =  rs.getString(4);
                 String pedidosPendientes1 = rs.getString(5);
                 String bloqueado= rs.getString(6);

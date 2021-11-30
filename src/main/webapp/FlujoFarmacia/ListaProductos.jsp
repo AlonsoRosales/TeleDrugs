@@ -3,13 +3,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="pe.edu.pucp.iweb.teledrugs.Beans.BFarmacia" %>
-<%String correo = (String) request.getAttribute("correo");%>
-<jsp:useBean type="java.util.ArrayList<pe.edu.pucp.iweb.teledrugs.Beans.BProducto>" scope="request" id="listaProductos"/>
-<jsp:useBean id="ruc" scope="request" type="java.lang.String" />
-<jsp:useBean type="pe.edu.pucp.iweb.teledrugs.Beans.BFarmacia" scope="request" id="farmacia"/>;
-
-
-
+<% ArrayList<BProducto> listaProductos = session.getAttribute("listaProductos") != null ? (ArrayList) session.getAttribute("listaProductos") : new ArrayList<>();%>
+<%BFarmacia farmacia = session.getAttribute("farmacia") != null ? (BFarmacia) session.getAttribute("farmacia") : new BFarmacia(); %>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -39,7 +34,7 @@
                 </a>
 
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li><a class="dropdown-item" href="iniciar/iniciar.html">Cerrar sesión</a></li>
+                    <li><a class="dropdown-item" href="<%=request.getContextPath()%>">Cerrar sesión</a></li>
                 </ul>
             </div>
         </div>
@@ -52,17 +47,15 @@
             <p class="lead fw-normal text-white-50 mb-0">Farmacia <%=farmacia.getNombre() %></p>
         </div>
     </div>
-    <form method="post" action="<%=request.getContextPath()%>/Usuario?correo=<%=correo%>&opcion=Buscar&ruc=<%=farmacia.getRuc()%>">
+    <form method="post" action="<%=request.getContextPath()%>/FarmaciaPrincipal?action=buscar">
         <div class = "box">
             <input  type="text" name="search" placeholder="Buscar producto" class="src" autocomplete = "off">
         </div>
     </form>
     <div style="display:flex; align-items:center; justify-content:center; margin-top: 50px; margin-bottom: 15px;">
-        <% System.out.println((String)request.getAttribute("ruc")); %>
-        <% System.out.println(ruc); %>
-        <a class="btn btn-success" href="/TeleDrugs_war_exploded/FarmaciaServlet?ruc=<%=request.getAttribute("ruc")%>" style="width:250px;">Agregar Producto</a>
+        <a class="btn btn-success" href="<%=request.getContextPath()%>/FarmaciaPrincipal?action=crear" style="width:250px;">Agregar Producto</a>
 
-        <a class="btn btn-success" href="/TeleDrugs_war_exploded/HistorialPedido?ruc=<%=request.getAttribute("ruc")%>" style="width:250px;">Ver Historial de Pedidos</a>
+        <a class="btn btn-success" href="<%=request.getContextPath()%>/FarmaciaPrincipal?action=listarPedidos" style="width:250px;">Ver Historial de Pedidos</a>
     </div>
 </header>
 </div>
@@ -87,7 +80,7 @@
             %>
             <tr>
 
-                <td class="text-center text-lg text-medium">SIN FOTO</td>
+                <td class="text-center text-lg text-medium"><img style="width: 50px; height: 50px;" src="<%=listaproducto.getFoto()%>"></td>
                 <td class="text-center text-lg text-medium"><%=listaproducto.getNombre()%></td>
                 <td class="text-center text-lg text-medium"><%=listaproducto.getDescripcion()%></td>
                 <td class="text-center text-lg text-medium"><%=listaproducto.getStock()%></td>
@@ -95,7 +88,7 @@
 
 
                 <td class="text-center text-lg text-medium">
-                    <div class="column"><a style="width:120px; margin:5px;" class="btn btn-success" href="EditarProducto.html">Editar</a></div>
+                    <div class="column"><a style="width:120px; margin:5px;" class="btn btn-success" href="#">Editar</a></div>
                 </td>
                 <td class="text-center">
                     <div class="modal" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">

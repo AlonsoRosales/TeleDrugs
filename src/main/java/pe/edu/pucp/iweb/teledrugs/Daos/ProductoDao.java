@@ -1,6 +1,5 @@
 package pe.edu.pucp.iweb.teledrugs.Daos;
 
-import pe.edu.pucp.iweb.teledrugs.Beans.BCliente;
 import pe.edu.pucp.iweb.teledrugs.Beans.BProducto;
 
 import java.sql.*;
@@ -9,8 +8,8 @@ import java.util.Scanner;
 
 public class ProductoDao extends BaseDao {
     public void inserta_producto(String nombre, double precio, int stock, String descripcion, boolean requiereReceta, String farmacia_ruc) {
-        String sqlInsert = "INSERT\tINTO mydb.producto (nombre,precio,stock,descripcion, requiereReceta,farmacia_ruc)\n" +
-                "VALUES(?,?,?,?, ?,?)";
+        String sqlInsert = "INSERT INTO mydb.producto (nombre,precio,stock,descripcion, requiereReceta,farmacia_ruc)\n" +
+                "VALUES(?,?,?,?,?,?)";
         try(Connection conn = this.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sqlInsert);){
             pstmt.setString(1, nombre);
@@ -193,60 +192,32 @@ public class ProductoDao extends BaseDao {
 
 
     public ArrayList<BProducto> ProductosPorFarmacia(String rucFarmacia){
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
         ArrayList<BProducto> listaProdxFarm = new ArrayList<>();
-
-
         String sql = "select producto.foto,producto.idproducto,producto.nombre,producto.descripcion,producto.stock,producto.precio,producto.farmacia_ruc from producto " +
                 "join farmacia on producto.farmacia_ruc = farmacia.ruc " +
                 "where farmacia_ruc = ?";
-
         try(Connection conn = this.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);){
-
             pstmt.setString(1,rucFarmacia);
-
             try(ResultSet rs = pstmt.executeQuery()){
                 while (rs.next()) {
-                    Blob fotoProducto = rs.getBlob(1);
+                    String fotoProducto = rs.getString(1);
                     int idProducto = rs.getInt(2);
                     String nombreProducto = rs.getString(3);
                     String descProducto = rs.getString(4);
                     int stockProducto = rs.getInt(5);
                     String precioProductoStr = rs.getString(6);
                     double precioProducto = Double.parseDouble(precioProductoStr);
-
-                    System.out.println(nombreProducto);
-                    System.out.println(precioProducto);
-
-
-                    listaProdxFarm.add(new BProducto(idProducto, nombreProducto, descProducto, null, stockProducto, precioProducto, rucFarmacia));
+                    listaProdxFarm.add(new BProducto(idProducto, nombreProducto, descProducto, fotoProducto, stockProducto, precioProducto, rucFarmacia));
                 }
-
-
-
             }
-            catch (SQLException e){
-                e.getSQLState();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
         }catch (SQLException throwables) {
             throwables.printStackTrace();
             throwables.getSQLState();
-            System.out.println("No existe el producto!!!!");
-
         }
-
         return listaProdxFarm;
-
     }
+
     public BProducto obtenerProducto(String idProducto) {
         BProducto producto = null;
 

@@ -4,6 +4,7 @@ package pe.edu.pucp.iweb.teledrugs.Controllers;
 import pe.edu.pucp.iweb.teledrugs.Beans.BCliente;
 import pe.edu.pucp.iweb.teledrugs.Daos.ClienteDao;
 import pe.edu.pucp.iweb.teledrugs.Daos.CredencialesDao;
+import pe.edu.pucp.iweb.teledrugs.Daos.FarmaciaDao;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -106,6 +107,8 @@ public class PaginaPrincipalServlet extends HttpServlet {
                     session.setMaxInactiveInterval(10*60);
                     response.sendRedirect(request.getContextPath() + "/Usuario");
                 } else if (rol.equalsIgnoreCase("farmacia")) {
+                    FarmaciaDao farmaciaDao = new FarmaciaDao();
+                    session.setAttribute("farmacia", farmaciaDao.mostrarFarmaciaCorreo(correo));
                     response.sendRedirect(request.getContextPath() + "/FarmaciaPrincipal");
                 }
 
