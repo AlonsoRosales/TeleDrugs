@@ -8,11 +8,6 @@ public class CredencialesDao extends BaseDao {
 
     //FUNCION PARA REGISTRAR FARMACIA EN CREDENCIALES
     public void registrarFarmacia(String correo, String contrasena){
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
 
         String rol= "farmacia";
         String sql = "INSERT INTO credenciales(correo,contrasena,rol) VALUES(?,?,?)";
@@ -50,11 +45,7 @@ public class CredencialesDao extends BaseDao {
 
     public boolean existeCredenciales(String correo,String contrasena){
         Boolean existe = false;
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+
         String sentenciaSQL ="SELECT * FROM credenciales WHERE correo = ? AND contrasena = ?";
         try (Connection conn = this.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sentenciaSQL)) {
@@ -74,11 +65,6 @@ public class CredencialesDao extends BaseDao {
 
 
     public void insertCliente(String correo, String contrasena){
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
 
         String sentenciaSQL = "INSERT INTO credenciales(correo,contrasena,rol)\n" +
                 "VALUES(?,?,?)";
@@ -95,8 +81,18 @@ public class CredencialesDao extends BaseDao {
 
     }
 
+    public void cambiarContrasenaCliente(String correo,String contrasena){
+        String sentenciaSQL = "UPDATE credenciales c SET c.contrasena = ? WHERE c.correo = ?;";
+        try (Connection conn = this.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sentenciaSQL)) {
+            pstmt.setString(1,contrasena);
+            pstmt.setString(2,correo);
+            pstmt.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
-
+    }
 
     public boolean nombreValid(String nombre) {
         String regex = "^[\\w'\\-,.][^0-9_!¡?÷?¿/\\\\+=@#$%ˆ&*(){}|~<>;:[\\]]]{1,}$";

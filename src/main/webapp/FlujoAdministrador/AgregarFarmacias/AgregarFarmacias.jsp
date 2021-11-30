@@ -22,9 +22,6 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-
-
-
                     </ul>
                     <div class="dropdown">
                         <a class="btn btn-outline-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
@@ -51,6 +48,18 @@
         <!--form-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
+                <% if (session.getAttribute("msg") != null) {%>
+                <div class="alert alert-danger" role="alert" >
+                    <%=(String) session.getAttribute("msg")%>
+                </div>
+                <% session.removeAttribute("msg"); %>
+                <% } %>
+                <% if (session.getAttribute("err") != null) {%>
+                <div class="alert alert-danger" role="alert" >
+                    <%=(String) session.getAttribute("err")%>
+                </div>
+                <% session.removeAttribute("err"); %>
+                <% } %>
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-10 row-cols-xl-10 justify-content-center">
                     <div style="width:600px" class="col mb-5">
                         <div style="display:flex; justify-content:center; align-items:center; border-radius:10px; border: 2px solid #e1e7ec" class="card h-100">
@@ -58,7 +67,7 @@
                             <!-- Product image-->
                             <form method="POST" action="<%=request.getContextPath()%>/AgregarFarmacia">
                                 <i class="bi bi-camera-fill"style='font-size:30px'></i>
-                                <input type="file" name="Imagen" id="Foto" value="image/*">
+                                <input type="file" name="Imagen" id="Foto" >
                                 <div class="signup-image">
                                     <figure style="display:flex; justify-content:center; align-items:center; margin-top:20px; margin-bottom:0px"><img src="FlujoAdministrador/AgregarFarmacias/Imagenes/farmacia.jpg" alt="house image" width="230px" height="200px"></figure>
                                 </div>
@@ -67,7 +76,7 @@
                                 <br>
                                 <input class="m-3" style="height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" type="text" name="Direccion" id="Dirección" placeholder="Dirección:">
                                 <br>
-                                <input class="m-3" style="height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" type="search" name="Distrito" list="listadistritos" placeholder="Distrito">
+                                <!--input class="m-3" style="height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" type="search" name="Distrito" list="listadistritos" placeholder="Distrito">
                                 <datalist id="listadistritos">
                                     <option value="Ancón">Ancón</option>
                                     <option value="Ate">Ate</option>
@@ -112,7 +121,60 @@
                                     <option value="Surquillo">Surquillo</option>
                                     <option value="Villa el Salvador">Villa el Salvador</option>
                                     <option value="Villa María del Triunfo">Villa María del Triunfo</option>
-                                </datalist>
+                                </datalist-->
+                                <div class=" form-group" style="margin-top:15px;height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;margin-left:15px;">
+                                    <!--div class=" form-group" style="width:400px;  margin:auto; margin-bottom:30px;"-->
+                                    <!--label></label-->
+                                    <!--input style="width:400px;" name="FechaNacimiento" placeholder="Distrito" disabled/-->
+                                    <!--i class="zmdi zmdi-home"></i-->
+                                    <!--input class="m-3" style="height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" type="search" name="Distrito"  placeholder="Distrito"-->
+                                    <select class="form-select form-select-sm" style="color:gray;width:400px;height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" name="Distrito">
+                                        <option hidden selected>Distrito en el que reside</option>
+                                        <option value="Ancón">Ancón</option>
+                                        <option value="Ate">Ate</option>
+                                        <option value="Barranco">Barranco</option>
+                                        <option value="Breña">Breña</option>
+                                        <option value="Carabayllo">Carabayllo</option>
+                                        <option value="Chaclacayo">Chaclacayo</option>
+                                        <option value="Chorrillos">Chorrillos</option>
+                                        <option value="Cieneguilla">Cieneguilla</option>
+                                        <option value="Comas">Comas</option>
+                                        <option value="El Agustino">El Agustino</option>
+                                        <option value="Independencia">Independencia</option>
+                                        <option value="Jesus María">Jesus María</option>
+                                        <option value="La Molina">La Molina</option>
+                                        <option value="La Victoria">La Victoria</option>
+                                        <option value="Lima">Lima</option>
+                                        <option value="Lince">Lince</option>
+                                        <option value="Los Olivos">Los Olivos</option>
+                                        <option value="Lurigancho">Lurigancho</option>
+                                        <option value="Lurín">Lurín</option>
+                                        <option value="Magdalena del Mar">Magdalena del Mar</option>
+                                        <option value="Miraflores">Miraflores</option>
+                                        <option value="Pachacamac">Pachacamac</option>
+                                        <option value="Pucusana">Pucusana</option>
+                                        <option value="Pueblo Libre">Pueblo Libre</option>
+                                        <option value="Puente Piedra">Puente Piedra</option>
+                                        <option value="Punta Hermosa">Punta Hermosa</option>
+                                        <option value="Punta Negra">Punta Negra</option>
+                                        <option value="Rimac">Rimac</option>
+                                        <option value="San Bartolo">San Bartolo</option>
+                                        <option value="San Borja">San Borja</option>
+                                        <option value="San Isidro">San Isidro</option>
+                                        <option value="San Juan de Lurigancho">San Juan de Lurigancho</option>
+                                        <option value="San Juan de Miraflores">San Juan de Miraflores</option>
+                                        <option value="San Luis">San Luis</option>
+                                        <option value="San Martin de Porres">San Martin de Porres</option>
+                                        <option value="San Miguel">San Miguel</option>
+                                        <option value="Santa Anita">Santa Anita</option>
+                                        <option value="Santa María del Mar">Santa María del Mar</option>
+                                        <option value="Santa Rosa">Santa Rosa</option>
+                                        <option value="Santiago de Surco">Santiago de Surco</option>
+                                        <option value="Surquillo">Surquillo</option>
+                                        <option value="Villa el Salvador">Villa el Salvador</option>
+                                        <option value="Villa María del Triunfo">Villa María del Triunfo</option>
+                                    </select>
+                                </div>
                                 <br>
                                 <input class="m-3" style="height:30px;width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" type="text" name="Nombre" id="nombre" placeholder="Nombre de la Farmacia:">
                                 <br>
@@ -136,7 +198,8 @@
                                                 <div class="modal-footer">
                                                     <!--button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button-->
                                                     <!--button class="btn btn-success" type="submit"  data-bs-dismiss="modal">Aceptar</button-->
-                                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <a class="btn btn-success" data-bs-dismiss="modal"  role="button">Cancelar</a>
+                                                    <!--button class="btn btn-secondary" data-bs-dismiss="modal" >Cancelar</button-->
                                                     <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Aceptar</button>
                                                     <%//ESTO IBA EN LA LINEA DE ARRIBA onclick="alert('Se le ha enviado una confirmacion al correo electronico')">%>
                                                 </div>

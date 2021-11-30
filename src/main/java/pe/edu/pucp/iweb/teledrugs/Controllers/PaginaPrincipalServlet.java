@@ -55,13 +55,15 @@ public class PaginaPrincipalServlet extends HttpServlet {
             if(recontrasenia.equals(contrasenia)){
                 recontrasenaCorrecto = true;
             }
-
+            HttpSession session = request.getSession();
             ClienteDao clienteDao = new ClienteDao();
             if(nombreCorrecto & apellidoCorrecto & dniCorrecto & birthdayCorrecto & contrasenaCorrecto & recontrasenaCorrecto){
                 //VALIDAMOS SI EXISTE EL CLIENTE
                 boolean existeCliente = clienteDao.existeCliente(email,contrasenia);
                 if(existeCliente == true){
                     //SE IMPRIME UN MENSAJE DE ERRROR UN FEEDBACK
+                    session.setAttribute("err","Esta cuenta ya existe!");
+                    response.sendRedirect(request.getContextPath() + "/Registro");
                 }
                 else{
                     BCliente clientito = new BCliente(dni,nombre,apellido,distrito,birthday,email);
@@ -71,6 +73,7 @@ public class PaginaPrincipalServlet extends HttpServlet {
 
                     //UNA VEZ REGISTRADO LAS CREDENCIALES , REGISTRAMOS EL CLIENTE
                     clienteDao.registrarCliente(clientito);
+                    session.setAttribute("msg","Cuenta creada exitosamente!");
                     response.sendRedirect(request.getContextPath() + "/Registro");
                 }
 
@@ -78,7 +81,8 @@ public class PaginaPrincipalServlet extends HttpServlet {
             else{
                 //COMO SON DEMASIADAS VALIDACIONES , HABRIA UN MONTON DE CASOS , ENTONCES LO IDEAL SERIA MOSTRARLE UN SOLO MENSAJE
                 //DICIENDOLE QUE LOS CAMPOS ESTAN MAL Y YA , EN FORMA GENERAL PARA NO DECIRLE UNO EN ESPECIFICO
-
+                session.setAttribute("err","Datos ingresados incorrectamente!");
+                response.sendRedirect(request.getContextPath() + "/Registro");
             }
 
         } else if (act.equalsIgnoreCase("login")) {
@@ -87,15 +91,10 @@ public class PaginaPrincipalServlet extends HttpServlet {
             String correo = request.getParameter("correo");
 
             CredencialesDao credencialesDao = new CredencialesDao();
-
+            HttpSession session = request.getSession();
             if(credencialesDao.existeCredenciales(correo,constrasenia)){
                 String rol = credencialesDao.rolCredenciales(correo);
-                System.out.println(rol);
-                //String DNI = credencialesDao.obtenerIDCliente(correo);
-                //BAdministrador bAdministrador = new BAdministrador();
-                //bAdministrador.setContrasenia(constrasenia);
-                //bAdministrador.setLogueoCorreo(correo);
-                HttpSession session = request.getSession();
+                //HttpSession session = request.getSession();
                 if (rol.equalsIgnoreCase("administrador")) {
                     session.setAttribute("correo", correo);
                     session.setMaxInactiveInterval(10*60);
@@ -111,10 +110,27 @@ public class PaginaPrincipalServlet extends HttpServlet {
 
             }
             else{
-
-                //MENSAJE DE ERROR MENSAJE DE FEEDBACK
+                session.setAttribute("msg","El correo o contraseña no existen");
+                response.sendRedirect(request.getContextPath());
             }
 
+        } else if (act.equalsIgnoreCase("cambio")){
+            String correo = request.getParameter("Correo");
+            String pass = request.getParameter("pass");
+            String repass = request.getParameter("repass");
+            HttpSession session = request.getSession();
+            if(pass.equalsIgnoreCase("") || pass.equalsIgnoreCase("")){
+                session.setAttribute("err","La contrasena no puede estar vacia");
+                response.sendRedirect(request.getContextPath() + "/RecuperarContrasena?"+ "vista=cambio");
+            }else if(!pass.equals(repass)){
+                session.setAttribute("err","Ambas contraseñas tienen que ser iguales");
+                response.sendRedirect(request.getContextPath() + "/RecuperarContrasena?"+ "vista=cambio");
+            }else{
+                CredencialesDao credencialesDao = new CredencialesDao();
+                credencialesDao.cambiarContrasenaCliente(correo,pass);
+                session.setAttribute("msg","La contraseña a sido cambiada exitosamente!. Porfavor cerrar pestaña");
+                response.sendRedirect(request.getContextPath() + "/RecuperarContrasena?"+ "vista=cambio");
+            }
         }
     }
 }

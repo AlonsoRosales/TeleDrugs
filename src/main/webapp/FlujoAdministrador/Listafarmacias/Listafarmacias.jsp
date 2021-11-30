@@ -95,7 +95,7 @@
 								<td class="text-center text-lg text-medium"><%=farmacia.getCorreo()%></td>
 								<td class="text-center text-lg text-medium"><%=farmacia.getDireccion()%></td>
 								<td class="text-center text-lg text-medium"><%=farmacia.getDistrito()%></td>
-								<td class="text-center text-lg text-medium"><%=farmacia.getBloqueado()%></td>
+								<td class="text-center text-lg text-medium"><%=farmacia.getPedidosPendientes()%></td>
 								<td class="text-center">
 									<div class="form-check" style="display:flex; align-items:center; justify-content:center">
 										<input class="form-check-input" type="checkbox" value="<%=farmacia.getRuc()%>" name ="check<%=i%>" id="check">
