@@ -9,9 +9,13 @@ import pe.edu.pucp.iweb.teledrugs.DTO.DTOPedidoCliente;
 import pe.edu.pucp.iweb.teledrugs.Daos.ClienteDao;
 import pe.edu.pucp.iweb.teledrugs.Daos.FarmaciaDao;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Blob;
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ import java.util.ArrayList;
 public class ClienteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+
 
         HttpSession session = request.getSession();
         BCliente bCliente = (BCliente) session.getAttribute("usuario");
