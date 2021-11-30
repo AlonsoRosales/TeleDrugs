@@ -2,8 +2,6 @@ package pe.edu.pucp.iweb.teledrugs.Controllers;
 
 import pe.edu.pucp.iweb.teledrugs.Daos.ClienteDao;
 
-
-/*import javax.mail.*;*/
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,8 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.swing.*;
 import java.io.IOException;
+
+/*import javax.mail.*;*/
 //-------------------------------------------------
 /*import java.util.Properties;
 import javax.activation.DataHandler;

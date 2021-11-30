@@ -14,9 +14,18 @@ import java.io.IOException;
 public class PaginaPrincipalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String act = request.getParameter("act") != null ? request.getParameter("act") : "login";
 
-        RequestDispatcher view = request.getRequestDispatcher("/FlujoUsuario/homepage.jsp");
-        view.forward(request,response);
+        if (act.equalsIgnoreCase("logout")){
+            HttpSession session = request.getSession();
+            session.invalidate();
+            response.sendRedirect(request.getContextPath());
+        }else{
+            RequestDispatcher view = request.getRequestDispatcher("/FlujoUsuario/homepage.jsp");
+            view.forward(request,response);
+        }
+
+
     }
 
     @Override
@@ -89,6 +98,7 @@ public class PaginaPrincipalServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 if (rol.equalsIgnoreCase("administrador")) {
                     session.setAttribute("correo", correo);
+                    session.setMaxInactiveInterval(10*60);
                     response.sendRedirect(request.getContextPath() + "/AdminPrincipal");
                 } else if (rol.equalsIgnoreCase("cliente")) {
                     ClienteDao clienteDao = new ClienteDao();

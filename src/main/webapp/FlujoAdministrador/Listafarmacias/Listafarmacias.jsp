@@ -38,7 +38,7 @@
 							Usuario
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-							<li><a class="dropdown-item" href="<%=request.getContextPath()%>">Cerrar sesión</a></li>
+							<li><a class="dropdown-item" href="<%=request.getContextPath()%>/PaginaPrincipal?act=logout">Cerrar sesión</a></li>
 						</ul>
 					</div>
 				</div>
