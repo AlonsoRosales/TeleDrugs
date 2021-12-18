@@ -50,11 +50,9 @@
                                 </div>
                                 <div class="form-group" style="width:400px; margin:auto; margin-bottom:30px;">
                                     <label for="birthday"><i class="zmdi zmdi-calendar"></i></label>
-                                    <input style="width:400px;" type="date" name="FechaNacimiento" id="birthday" placeholder="Fecha de nacimiento"/>
+                                    <input style="color:gray;width:400px;" type="date" name="FechaNacimiento" id="birthday" placeholder="Fecha de nacimiento"/>
                                 </div>
-                                <div class=" form-group" style="width:400px;height:30px;margin:auto">
-                                    <!--label></label-->
-                                    <!--input style="width:400px;" name="FechaNacimiento" placeholder="Distrito" disabled/-->
+                                <div class=" form-group" style="width:400px;height:45px;margin:auto">
                                     <i class="zmdi zmdi-home" style="position: absolute" ></i>
                                     <select class="form-select form-select-sm" style="color:gray;width:400px;height:30px;border-top: none;border-left: none;border-right: none;text-indent: 30px; display:flex;align-items: center" name="Distrito">
                                         <option hidden selected>Distrito en el que reside</option>
@@ -103,58 +101,7 @@
                                         <option value="Villa María del Triunfo">Villa María del Triunfo</option>
                                     </select>
                                 </div>
-                                <!--div class="form-group" style="width:400px; margin:auto; margin-bottom:30px;">
-                                    <label for="listadistrito"><i class="zmdi zmdi-home"></i></label>
 
-                                    <input style="width:400px;" type="search" name="Distrito" list="listadistrito" placeholder="Distrito en el que reside">
-
-                                    <datalist id="listadistrito">
-                                        <option value="Ancón">Ancón</option>
-                                        <option value="Ate">Ate</option>
-                                        <option value="Barranco">Barranco</option>
-                                        <option value="Breña">Breña</option>
-                                        <option value="Carabayllo">Carabayllo</option>
-                                        <option value="Chaclacayo">Chaclacayo</option>
-                                        <option value="Chorrillos">Chorrillos</option>
-                                        <option value="Cieneguilla">Cieneguilla</option>
-                                        <option value="Comas">Comas</option>
-                                        <option value="El Agustino">El Agustino</option>
-                                        <option value="Independencia">Independencia</option>
-                                        <option value="Jesus María">Jesus María</option>
-                                        <option value="La Molina">La Molina</option>
-                                        <option value="La Victoria">La Victoria</option>
-                                        <option value="Lima">Lima</option>
-                                        <option value="Lince">Lince</option>
-                                        <option value="Los Olivos">Los Olivos</option>
-                                        <option value="Lurigancho">Lurigancho</option>
-                                        <option value="Lurín">Lurín</option>
-                                        <option value="Magdalena del Mar">Magdalena del Mar</option>
-                                        <option value="Miraflores">Miraflores</option>
-                                        <option value="Pachacamac">Pachacamac</option>
-                                        <option value="Pucusana">Pucusana</option>
-                                        <option value="Pueblo Libre">Pueblo Libre</option>
-                                        <option value="Puente Piedra">Puente Piedra</option>
-                                        <option value="Punta Hermosa">Punta Hermosa</option>
-                                        <option value="Punta Negra">Punta Negra</option>
-                                        <option value="Rimac">Rimac</option>
-                                        <option value="San Bartolo">San Bartolo</option>
-                                        <option value="San Borja">San Borja</option>
-                                        <option value="San Isidro">San Isidro</option>
-                                        <option value="San Juan de Lurigancho">San Juan de Lurigancho</option>
-                                        <option value="San Juan de Miraflores">San Juan de Miraflores</option>
-                                        <option value="San Luis">San Luis</option>
-                                        <option value="San Martin de Porres">San Martin de Porres</option>
-                                        <option value="San Miguel">San Miguel</option>
-                                        <option value="Santa Anita">Santa Anita</option>
-                                        <option value="Santa María del Mar">Santa María del Mar</option>
-                                        <option value="Santa Rosa">Santa Rosa</option>
-                                        <option value="Santiago de Surco">Santiago de Surco</option>
-                                        <option value="Surquillo">Surquillo</option>
-                                        <option value="Villa el Salvador">Villa el Salvador</option>
-                                        <option value="Villa María del Triunfo">Villa María del Triunfo</option>
-                                    </datalist>
-
-                                </div-->
                                 <div class="form-group" style="width:400px; margin:auto; margin-bottom:30px;">
                                     <label for="email"><i class="zmdi zmdi-email"></i></label>
                                     <input style="width:400px;" type="email" name="Correo" id="email" placeholder="Correo electrónico"/>
@@ -167,10 +114,7 @@
                                     <label for="re_pass"><i class="zmdi zmdi-lock-outline"></i></label>
                                     <input style="width:400px;" type="password" name="RePass" id="re_pass" placeholder="Repita su contraseña"/>
                                 </div>
-                                <!--<div class="form-group">
-                                    <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
-                                    <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>
-                                </div>-->
+
                                 <div class="form-group form-button">
                                     <div style="display:flex; align-items:center; justify-content:center;" class="column">
                                         <button class="btn btn-success" style="width:150px" type="submit">Registrar</button>

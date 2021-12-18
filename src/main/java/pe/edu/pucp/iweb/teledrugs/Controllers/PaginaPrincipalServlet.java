@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 @WebServlet(name = "PaginaPrincipalServlet", value = "/PaginaPrincipal")
 public class PaginaPrincipalServlet extends HttpServlet {
@@ -35,23 +38,37 @@ public class PaginaPrincipalServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String act = request.getParameter("act") != null ? request.getParameter("act") : "login";
 
         if (act.equalsIgnoreCase("reg")) {
-            String nombre = request.getParameter("Nombres");
-            String apellido = request.getParameter("Apellidos");
-            String dni = request.getParameter("DNI");
-            String birthday = request.getParameter("FechaNacimiento");
-            String distrito = request.getParameter("Distrito");
-            String email = request.getParameter("Correo");
-            String contrasenia = request.getParameter("Contrasena");
-            String recontrasenia = request.getParameter("RePass");
+            String nombre = request.getParameter("Nombres") != "" ? request.getParameter("Nombres") : " ";
+            String apellido = request.getParameter("Apellidos") != "" ? request.getParameter("Apellidos") : " ";
+            String dni = request.getParameter("DNI") != "" ? request.getParameter("DNI") : "000000000";
+            String birthday = request.getParameter("FechaNacimiento") != "" ? request.getParameter("FechaNacimiento") : "5050-50-50";
+
+            //VALIDACION DE LA FECHA
+            //----------------------------------------------------
+            String[] partesFecha = birthday.split("-");
+
+            Calendar fecha = new GregorianCalendar();
+            int dia = fecha.get(Calendar.DAY_OF_MONTH);
+            int mesGregorian = fecha.get(Calendar.MONTH);
+            int mes = mesGregorian + 1;
+            int anho = fecha.get(Calendar.YEAR);
+            boolean validacionBirthday = (anho >= Integer.parseInt(partesFecha[0])) && (mes >= Integer.parseInt(partesFecha[1])) && (dia > Integer.parseInt(partesFecha[2]));
+            //----------------------------------------------------
+
+            String distrito = request.getParameter("Distrito") != "" ? request.getParameter("Distrito") : " ";
+            String email = request.getParameter("Correo") != "" ? request.getParameter("Correo") : " ";
+            String contrasenia = request.getParameter("Contrasena") != "" ? request.getParameter("Contrasena") : " ";
+            String recontrasenia = request.getParameter("RePass") != "" ? request.getParameter("RePass") : " ";
 
             CredencialesDao credencialesDao = new CredencialesDao();
             boolean nombreCorrecto = credencialesDao.nombreValid(nombre);
             boolean apellidoCorrecto = credencialesDao.apellidoValid(apellido);
             boolean dniCorrecto = credencialesDao.dniValid(dni);
-            boolean birthdayCorrecto = credencialesDao.fechaIsValid(birthday);
+            boolean birthdayCorrecto = credencialesDao.fechaIsValid(birthday) && validacionBirthday;
             //EL DISTRITO YA NO SE VALIDA PORQUE VA A ESCOGER UNO DE LA LISTA
             boolean correoCorrecto = credencialesDao.emailisValid(email);
             boolean contrasenaCorrecto = credencialesDao.contrasenaisValid(contrasenia);
@@ -62,7 +79,7 @@ public class PaginaPrincipalServlet extends HttpServlet {
             }
             HttpSession session = request.getSession();
             ClienteDao clienteDao = new ClienteDao();
-            if(nombreCorrecto & apellidoCorrecto & dniCorrecto & birthdayCorrecto & contrasenaCorrecto & recontrasenaCorrecto){
+            if(nombreCorrecto & apellidoCorrecto & dniCorrecto & correoCorrecto & birthdayCorrecto & contrasenaCorrecto & recontrasenaCorrecto){
                 //VALIDAMOS SI EXISTE EL CLIENTE
                 boolean existeCliente = clienteDao.existeCliente(email,dni);
                 if(existeCliente == true){
@@ -86,8 +103,6 @@ public class PaginaPrincipalServlet extends HttpServlet {
                     byte[] hash = digest.digest(
                             contrasenia.getBytes(StandardCharsets.UTF_8));
                     String contraseniahashed = new String(Hex.encode(hash));
-                    System.out.println("La contra hasehada es : "+ contraseniahashed);
-
 
                     credencialesDao.insertCliente(email,contraseniahashed);
 

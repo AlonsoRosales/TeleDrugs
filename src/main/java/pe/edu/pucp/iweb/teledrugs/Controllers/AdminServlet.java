@@ -13,7 +13,7 @@ import javax.servlet.annotation.*;
 
 @WebServlet(name = "Admin", value = "/AdminPrincipal")
 public class AdminServlet extends HttpServlet {
-
+    //FALTA ALINEAR LA PARTE INFERIOR (LA SOMBRA NEGRA) PARA QUE SE QUEDE AHI t0DO EL TIEMPO
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String busqueda = request.getParameter("busqueda") != null ? request.getParameter("busqueda") : "";
         String offset = request.getParameter("offset") != null ? request.getParameter("offset") : "1";
@@ -59,8 +59,6 @@ public class AdminServlet extends HttpServlet {
         FarmaciaDao farmaciaDao = new FarmaciaDao();
         String correo = request.getParameter("correo");
         String opcion = request.getParameter("opcion") != null ? request.getParameter("opcion") : "";
-        //System.out.println(opcion);
-        //FarmaciaDao farmaciaDao = new FarmaciaDao();
         if(opcion.equalsIgnoreCase("Buscar")){
             String search = request.getParameter("search") != null ? request.getParameter("search") : "";
             // System.out.println(search);
@@ -68,8 +66,6 @@ public class AdminServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/AdminPrincipal?action=" + correo );
 
             }else{
-                //System.out.println("ENTRE HASTA ANTES DE ENVIAR LA LISTA");
-                //response.sendRedirect(request.getContextPath() + "/AdminPrincipal?action=" + correo + "?lista=" + farmaciaDao.listaFarmaciasPorBusqueda(search));
                 response.sendRedirect(request.getContextPath() + "/AdminPrincipal?action=" + correo + "&busqueda=" + search);
             }
 
@@ -92,7 +88,6 @@ public class AdminServlet extends HttpServlet {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                System.out.println(f);
             }
             String search ="";
             response.sendRedirect(request.getContextPath() + "/AdminPrincipal?correo=" + correo);

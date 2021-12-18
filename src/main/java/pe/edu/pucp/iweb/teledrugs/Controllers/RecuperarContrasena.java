@@ -1,5 +1,6 @@
 package pe.edu.pucp.iweb.teledrugs.Controllers;
 
+import pe.edu.pucp.iweb.teledrugs.Beans.BCliente;
 import pe.edu.pucp.iweb.teledrugs.Daos.ClienteDao;
 import pe.edu.pucp.iweb.teledrugs.Funciones.FuncionEnviaCorreo;
 
@@ -60,15 +61,17 @@ public class RecuperarContrasena extends HttpServlet{
         if(dniCorrecto & correoCorrecto){
             //TOCA HACER LA VALIDACION DE SI EXISTE UN USUARIO CON ESAS CREDENCIALES
             boolean existeCliente = clienteDao.existeCliente(correo,DNI);
-            System.out.println(existeCliente);
             if(!existeCliente){
                 //SI NO EXISTE EL CLIENTE SE MUESTRA UN MENSAJE DE ERROR FEEDBACK
                 session.setAttribute("err","No existe un cliente con esas credenciales!"); // TIENE SENTIDO DECIR QUE NO EXISTE EL CLIENTE?
                 response.sendRedirect(request.getContextPath() + "/RecuperarContrasena");
             }else{
                 //----------------------------------------------------------------------------------------------------------------------------------------
+                BCliente clientito = clienteDao.obtenerCliente(correo);
                 try {
                     FuncionEnviaCorreo.main(correo);
+                    session.setAttribute("clientito",clientito);
+                    session.setAttribute("msgcontra","Se le ha enviado un link a su correo registrado para que cambie su contraseña.");
                     response.sendRedirect(request.getContextPath());
                 } catch (MessagingException e) {
                     e.printStackTrace();

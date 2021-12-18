@@ -1,3 +1,4 @@
+<%@ page import="pe.edu.pucp.iweb.teledrugs.Beans.BCliente" %>
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
@@ -31,7 +32,9 @@
                             <form method="POST" action="<%=request.getContextPath()%>/PaginaPrincipal?act=cambio" class="register-form" id="register-form">
                                 <div class="form-group" style="width:400px; margin:auto; margin-bottom:30px;">
                                     <label for="pass1"><i class="zmdi zmdi-email"></i></label>
-                                    <input style="width:400px;" type="email" name="Correo" id="pass1" placeholder="Correo"/>
+                                    <!--input style="width:400px;" type="email" name="Correo" id="pass1" placeholder="Correo"/-->
+                                    <%BCliente cliente = (BCliente) session.getAttribute("clientito");%>
+                                    <input style="width:400px;" type="email" name="Correo" id="pass1" placeholder="<%=cliente.getLogueoCorreo()%>" disabled/>
                                 </div>
                                 <div class="form-group" style="width:400px; margin:auto; margin-bottom:30px;">
                                     <label for="pass2"><i class="zmdi zmdi-assignment-account"></i></label>

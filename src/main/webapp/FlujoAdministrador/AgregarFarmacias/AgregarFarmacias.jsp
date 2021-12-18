@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>TeleDrugs</title>
+        <title>Agregar Farmacias - TeleDrugs</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Bootstrap icons-->
@@ -18,7 +18,8 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#!">Teledrugs</a>
+                <a class="navbar-brand" href="<%=request.getContextPath()%>/AdminPrincipal">Teledrugs</a>
+                <!--a class="navbar-brand" href="#!">Teledrugs</a-->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
@@ -76,58 +77,7 @@
                                 <br>
                                 <input class="m-3" style="height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" type="text" name="Direccion" id="Dirección" placeholder="Dirección:">
                                 <br>
-                                <!--input class="m-3" style="height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" type="search" name="Distrito" list="listadistritos" placeholder="Distrito">
-                                <datalist id="listadistritos">
-                                    <option value="Ancón">Ancón</option>
-                                    <option value="Ate">Ate</option>
-                                    <option value="Barranco">Barranco</option>
-                                    <option value="Breña">Breña</option>
-                                    <option value="Carabayllo">Carabayllo</option>
-                                    <option value="Chaclacayo">Chaclacayo</option>
-                                    <option value="Chorrillos">Chorrillos</option>
-                                    <option value="Cieneguilla">Cieneguilla</option>
-                                    <option value="Comas">Comas</option>
-                                    <option value="El Agustino">El Agustino</option>
-                                    <option value="Independencia">Independencia</option>
-                                    <option value="Jesus María">Jesus María</option>
-                                    <option value="La Molina">La Molina</option>
-                                    <option value="La Victoria">La Victoria</option>
-                                    <option value="Lima">Lima</option>
-                                    <option value="Lince">Lince</option>
-                                    <option value="Los Olivos">Los Olivos</option>
-                                    <option value="Lurigancho">Lurigancho</option>
-                                    <option value="Lurín">Lurín</option>
-                                    <option value="Magdalena del Mar">Magdalena del Mar</option>
-                                    <option value="Miraflores">Miraflores</option>
-                                    <option value="Pachacamac">Pachacamac</option>
-                                    <option value="Pucusana">Pucusana</option>
-                                    <option value="Pueblo Libre">Pueblo Libre</option>
-                                    <option value="Puente Piedra">Puente Piedra</option>
-                                    <option value="Punta Hermosa">Punta Hermosa</option>
-                                    <option value="Punta Negra">Punta Negra</option>
-                                    <option value="Rimac">Rimac</option>
-                                    <option value="San Bartolo">San Bartolo</option>
-                                    <option value="San Borja">San Borja</option>
-                                    <option value="San Isidro">San Isidro</option>
-                                    <option value="San Juan de Lurigancho">San Juan de Lurigancho</option>
-                                    <option value="San Juan de Miraflores">San Juan de Miraflores</option>
-                                    <option value="San Luis">San Luis</option>
-                                    <option value="San Martin de Porres">San Martin de Porres</option>
-                                    <option value="San Miguel">San Miguel</option>
-                                    <option value="Santa Anita">Santa Anita</option>
-                                    <option value="Santa María del Mar">Santa María del Mar</option>
-                                    <option value="Santa Rosa">Santa Rosa</option>
-                                    <option value="Santiago de Surco">Santiago de Surco</option>
-                                    <option value="Surquillo">Surquillo</option>
-                                    <option value="Villa el Salvador">Villa el Salvador</option>
-                                    <option value="Villa María del Triunfo">Villa María del Triunfo</option>
-                                </datalist-->
                                 <div class=" form-group" style="margin-top:15px;height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;margin-left:15px;">
-                                    <!--div class=" form-group" style="width:400px;  margin:auto; margin-bottom:30px;"-->
-                                    <!--label></label-->
-                                    <!--input style="width:400px;" name="FechaNacimiento" placeholder="Distrito" disabled/-->
-                                    <!--i class="zmdi zmdi-home"></i-->
-                                    <!--input class="m-3" style="height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" type="search" name="Distrito"  placeholder="Distrito"-->
                                     <select class="form-select form-select-sm" style="color:gray;width:400px;height:30px; width:400px; border-radius:7px; border: 1px solid #e1e7ec; outline:none;" name="Distrito">
                                         <option hidden selected>Distrito en el que reside</option>
                                         <option value="Ancón">Ancón</option>
@@ -227,7 +177,8 @@
         <!--/form-->
         <!-- Footer-->
         <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; TeleDrugs 2021</p></div>
+            <div class="container"><p class="m-0 text-center text-white">Proyecto Ingenieria Web : TeleDrugs</p></div>
+            <!--div class="container"><p class="m-0 text-center text-white">Copyright &copy; TeleDrugs 2021</p></div-->
         </footer>
 
         <!-- Bootstrap core JS-->

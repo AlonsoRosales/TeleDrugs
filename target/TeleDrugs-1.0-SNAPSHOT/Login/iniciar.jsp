@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Iniciar sesión</title>
+        <title>Inicio de Sesión - TeleDrugs</title>
 
         <!-- Font Icon -->
         <link  href="Login/fonts/material-icon/css/material-design-iconic-font.min.css"rel="stylesheet">

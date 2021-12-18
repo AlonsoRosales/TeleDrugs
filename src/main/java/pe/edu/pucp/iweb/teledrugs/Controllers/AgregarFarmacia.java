@@ -20,15 +20,14 @@ import java.security.NoSuchAlgorithmException;
 public class AgregarFarmacia extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("agregar");
         RequestDispatcher view = request.getRequestDispatcher("/FlujoAdministrador/AgregarFarmacias/AgregarFarmacias.jsp");
         view.forward(request,response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         Part imagenFarmacia = request.getPart("Imagen");
-        //String imagenFarmacia = request.getParameter("Imagen");
         String RUCFarmacia = request.getParameter("RUC");
         String direccionFarmacia = request.getParameter("Direccion");
         String distritoFarmacia = request.getParameter("Distrito");
