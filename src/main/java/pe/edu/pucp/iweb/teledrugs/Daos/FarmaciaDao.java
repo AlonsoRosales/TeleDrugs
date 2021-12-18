@@ -97,6 +97,37 @@ public class FarmaciaDao extends BaseDao {
         }
         return bProductos;
     }
+    public ArrayList<BProducto> listarProductosPaginacion(String ruc,String offset){
+
+        ArrayList<BProducto> bProductos = new ArrayList<>();
+        String sql ="SELECT p.* FROM producto p\n" +
+                "                INNER JOIN farmacia f ON f.ruc=p.farmacia_ruc\n" +
+                "                WHERE f.ruc = ?\n" +
+                "                ORDER BY p.nombre\n" +
+                "                LIMIT 8 OFFSET ?;";
+
+        try(Connection conn = this.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);){
+            pstmt.setString(1,ruc);
+            int offset_num = (Integer.parseInt(offset)-1)*8;
+            pstmt.setInt(2,offset_num);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                int idProducto = rs.getInt(1);
+                String nombre = rs.getString(2);
+                String descripcion = rs.getString(3);
+                String requiereReceta = rs.getString(4);
+                String foto = rs.getString(5);
+                String stock = rs.getString(6);
+                double precio = rs.getDouble(7);
+                String ruc2 = rs.getString(8);
+                bProductos.add(new BProducto(idProducto,nombre,descripcion,foto,Integer.parseInt(stock),precio,ruc2));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return bProductos;
+    }
 
     public ArrayList<BFarmacia> mostrarListaFarmacias(){
 
@@ -112,6 +143,37 @@ public class FarmaciaDao extends BaseDao {
             Statement stmt = conn.createStatement();){
 
             ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                String ruc = rs.getString(1);
+                String nombre = rs.getString(2);
+                String correo = rs.getString(3);
+                String distrito =  rs.getString(4);
+                String pedidosPendientes1 = rs.getString(5);
+                String bloqueado= rs.getString(6);
+                String direccion = rs.getString(7);
+                BFarmacia f = new BFarmacia(ruc, nombre,correo, distrito,bloqueado,pedidosPendientes1,direccion);
+                listaFarmacias.add(f);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return listaFarmacias;
+    }
+
+    public ArrayList<BFarmacia> mostrarListaFarmacias(String hola){
+
+        ArrayList<BFarmacia> listaFarmacias = new ArrayList<>();
+        String sql ="SELECT f.ruc, f.nombre, l.correo, f.distrito,f.pedidosPendientes,bloqueado,f.direccion FROM farmacia f\n" +
+                "INNER JOIN credenciales l ON l.correo = f.logueo_correo\n" +
+                "INNER JOIN producto p ON p.farmacia_ruc=f.ruc\n" +
+                "LEFT JOIN producto_tiene_pedidos pt ON p.idProducto = pt.producto_idProducto\n" +
+                "GROUP BY f.ruc " +
+                "order by case when f.distrito like ? then 0 else 1 end, f.distrito;";
+
+        try(Connection conn = this.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);){
+            pstmt.setString(1,hola);
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()){
                 String ruc = rs.getString(1);
                 String nombre = rs.getString(2);
@@ -231,9 +293,8 @@ public class FarmaciaDao extends BaseDao {
             pstmt.setString(3,farmacia.getDireccion());
             pstmt.setString(4, farmacia.getDistrito());
             pstmt.setString(5,farmacia.getCorreo());
-            pstmt.setString(6,farmacia.getFotos());
+            pstmt.setBlob(6,farmacia.getFotos());
             pstmt.executeUpdate();
-            System.out.println("LLENE FARMACIA");
         }catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -313,18 +374,20 @@ public class FarmaciaDao extends BaseDao {
 
 
 
-    public ArrayList<BFarmacia> listaFarmaciasPorBusqueda(String opcion){
+    public ArrayList<BFarmacia> listaFarmaciasPorBusqueda(String opcion,Integer offset){
 
         ArrayList<BFarmacia> listaFarmacias = new ArrayList<>();
 
         String sentenciaSQL = "SELECT f.ruc, f.nombre, l.correo, f.distrito,f.pedidosPendientes,f.bloqueado,f.direccion FROM farmacia f\n"+
                 "INNER JOIN credenciales l ON l.correo = f.logueo_correo\n"+
                 "GROUP BY f.ruc\n"+
-                "HAVING lower(f.nombre) LIKE ?;";
+                "HAVING lower(f.nombre) LIKE ?\n"+
+                "LIMIT 4 OFFSET ?;";
 
         try(Connection conn = this.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sentenciaSQL)){
-
+            int offset_num = (offset-1)*4;
+            pstmt.setInt(2,offset_num);
             pstmt.setString(1,"%" + opcion + "%");
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()){

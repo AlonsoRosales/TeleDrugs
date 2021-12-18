@@ -46,7 +46,7 @@ public class CredencialesDao extends BaseDao {
     public boolean existeCredenciales(String correo,String contrasena){
         Boolean existe = false;
 
-        String sentenciaSQL ="SELECT * FROM credenciales WHERE correo = ? AND contrasena = ?";
+        String sentenciaSQL ="SELECT * FROM credenciales WHERE correo = ? AND contrasena = sha2(?,256)";
         try (Connection conn = this.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sentenciaSQL)) {
 

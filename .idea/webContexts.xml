@@ -5,6 +5,7 @@
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/FlujoAdministrador/AgregarFarmacias/AgregarFarmacias.jsp" value="file://$PROJECT_DIR$/src/main/webapp/FlujoAdministrador/AgregarFarmacias" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario/historial.jsp" value="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario/homepage.jsp" value="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario/jabon.jsp" value="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario/paracetamol.jsp" value="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario/profile.jsp" value="file://$PROJECT_DIR$/src/main/webapp/FlujoUsuario" />

@@ -1,6 +1,8 @@
 
 package pe.edu.pucp.iweb.teledrugs.Controllers;
 
+import org.bouncycastle.util.encoders.Hex;
+import pe.edu.pucp.iweb.teledrugs.Beans.BAdministrador;
 import pe.edu.pucp.iweb.teledrugs.Beans.BCliente;
 import pe.edu.pucp.iweb.teledrugs.Daos.ClienteDao;
 import pe.edu.pucp.iweb.teledrugs.Daos.CredencialesDao;
@@ -10,6 +12,9 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 @WebServlet(name = "PaginaPrincipalServlet", value = "/PaginaPrincipal")
 public class PaginaPrincipalServlet extends HttpServlet {
@@ -25,7 +30,6 @@ public class PaginaPrincipalServlet extends HttpServlet {
             RequestDispatcher view = request.getRequestDispatcher("/FlujoUsuario/homepage.jsp");
             view.forward(request,response);
         }
-
 
     }
 
@@ -60,17 +64,32 @@ public class PaginaPrincipalServlet extends HttpServlet {
             ClienteDao clienteDao = new ClienteDao();
             if(nombreCorrecto & apellidoCorrecto & dniCorrecto & birthdayCorrecto & contrasenaCorrecto & recontrasenaCorrecto){
                 //VALIDAMOS SI EXISTE EL CLIENTE
-                boolean existeCliente = clienteDao.existeCliente(email,contrasenia);
+                boolean existeCliente = clienteDao.existeCliente(email,dni);
                 if(existeCliente == true){
                     //SE IMPRIME UN MENSAJE DE ERRROR UN FEEDBACK
-                    session.setAttribute("err","Esta cuenta ya existe!");
+                    //SI IMPRIMIMOS ESTE MENSAJE QUIERE DECIR QUE  p.e. HA "DESCUBIERTO" UNA CUENTA QUE NO ERA SUYA , POR ESO
+                    //LO MEJOR SERÍA QUE LE SALGA UN MENSAJE DICIENDO QUE HA OCURRIDO UN ERROR O ALGO SIMILAR
+                    session.setAttribute("err","Correo no disponible! Ingrese otro!");
                     response.sendRedirect(request.getContextPath() + "/Registro");
                 }
                 else{
                     BCliente clientito = new BCliente(dni,nombre,apellido,distrito,birthday,email);
                     // YA TENGO EL CLIENTE AHORA FALTA PASAR LA CONTRASEÑA PARA PODER REGISTRARLO
                     //PRIMERO REGISTRAMOS EN LAS CREDENCIALES
-                    credencialesDao.insertCliente(email,contrasenia);
+
+                    MessageDigest digest = null;
+                    try {
+                        digest = MessageDigest.getInstance("SHA-256");
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                    byte[] hash = digest.digest(
+                            contrasenia.getBytes(StandardCharsets.UTF_8));
+                    String contraseniahashed = new String(Hex.encode(hash));
+                    System.out.println("La contra hasehada es : "+ contraseniahashed);
+
+
+                    credencialesDao.insertCliente(email,contraseniahashed);
 
                     //UNA VEZ REGISTRADO LAS CREDENCIALES , REGISTRAMOS EL CLIENTE
                     clienteDao.registrarCliente(clientito);
@@ -97,7 +116,10 @@ public class PaginaPrincipalServlet extends HttpServlet {
                 String rol = credencialesDao.rolCredenciales(correo);
                 //HttpSession session = request.getSession();
                 if (rol.equalsIgnoreCase("administrador")) {
+                    BAdministrador administrador= new BAdministrador();
+                    administrador.setCorreo(correo);
                     session.setAttribute("correo", correo);
+                    session.setAttribute("admin", administrador);
                     session.setMaxInactiveInterval(10*60);
                     response.sendRedirect(request.getContextPath() + "/AdminPrincipal");
                 } else if (rol.equalsIgnoreCase("cliente")) {
@@ -131,7 +153,16 @@ public class PaginaPrincipalServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/RecuperarContrasena?"+ "vista=cambio");
             }else{
                 CredencialesDao credencialesDao = new CredencialesDao();
-                credencialesDao.cambiarContrasenaCliente(correo,pass);
+                MessageDigest digest = null;
+                try {
+                    digest = MessageDigest.getInstance("SHA-256");
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                byte[] hash = digest.digest(
+                        pass.getBytes(StandardCharsets.UTF_8));
+                String passhashed = new String(Hex.encode(hash));
+                credencialesDao.cambiarContrasenaCliente(correo,passhashed);
                 session.setAttribute("msg","La contraseña a sido cambiada exitosamente!. Porfavor cerrar pestaña");
                 response.sendRedirect(request.getContextPath() + "/RecuperarContrasena?"+ "vista=cambio");
             }

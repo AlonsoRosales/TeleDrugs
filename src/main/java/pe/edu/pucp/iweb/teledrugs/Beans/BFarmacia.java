@@ -1,5 +1,7 @@
 package pe.edu.pucp.iweb.teledrugs.Beans;
 
+import java.io.InputStream;
+
 public class BFarmacia {
     private String ruc;
     private String nombre;
@@ -7,11 +9,11 @@ public class BFarmacia {
     private String distrito;
     private String bloqueado;
     private String pedidosPendientes;
-    private String fotos;
+    private InputStream fotos;
     private String correo;
 
     //VERIFICAR SI ESTE CONSTRUCTOR SE USA EN ALGO
-    public BFarmacia(String ruc, String nombre, String direccion, String distrito, String fotos, String correo) {
+    public BFarmacia(String ruc, String nombre, String direccion, String distrito, InputStream fotos, String correo) {
         this.ruc = ruc;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -82,11 +84,11 @@ public class BFarmacia {
         this.pedidosPendientes = pedidosPendientes;
     }
 
-    public String getFotos() {
+    public InputStream getFotos() {
         return fotos;
     }
 
-    public void setFotos(String fotos) {
+    public void setFotos(InputStream fotos) {
         this.fotos = fotos;
     }
 

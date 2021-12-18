@@ -29,6 +29,7 @@ public class AdminServlet extends HttpServlet {
             if(listaFarmaciasTotal.size()%4==0){
                 index=listaFarmaciasTotal.size()/4;
             }else{
+
                 index=listaFarmaciasTotal.size()/4+1;
             }
             request.setAttribute("index",index);
@@ -37,8 +38,17 @@ public class AdminServlet extends HttpServlet {
             view.forward(request,response);
 
         }else{
-            //FALTA CONFIGURAR LA VISTA DE LISTA DE FARMACIAS PARA QUE SE VEA SI ESTA BLOQUEADO O NO LA FARMACIA
-            request.setAttribute("listaFarmacias",farmaciaDao.listaFarmaciasPorBusqueda(busqueda));
+            request.setAttribute("pag",Integer.parseInt(offset));
+            int offsetInt = Integer.parseInt(offset);
+            request.setAttribute("listaFarmacias",farmaciaDao.listaFarmaciasPorBusqueda(busqueda,offsetInt));
+            ArrayList<BFarmacia> listaFarmaciasTotal = farmaciaDao.mostrarListaFarmaciasTotal();
+            int index;
+            if(listaFarmaciasTotal.size()%4==0){
+                index=listaFarmaciasTotal.size()/4;
+            }else{
+                index=listaFarmaciasTotal.size()/4+1;
+            }
+            request.setAttribute("index",index);
             RequestDispatcher view = request.getRequestDispatcher("FlujoAdministrador/Listafarmacias/Listafarmacias.jsp");
             view.forward(request,response);
         }
@@ -87,9 +97,6 @@ public class AdminServlet extends HttpServlet {
             String search ="";
             response.sendRedirect(request.getContextPath() + "/AdminPrincipal?correo=" + correo);
         }
-
-
-
 
     }
 }

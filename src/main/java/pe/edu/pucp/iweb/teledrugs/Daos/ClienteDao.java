@@ -4,7 +4,13 @@ import pe.edu.pucp.iweb.teledrugs.Beans.BCliente;
 import pe.edu.pucp.iweb.teledrugs.DTO.DTOBuscarProductoCliente;
 import pe.edu.pucp.iweb.teledrugs.DTO.DTOCarritoCliente;
 import pe.edu.pucp.iweb.teledrugs.DTO.DTOPedidoCliente;
+import pe.edu.pucp.iweb.teledrugs.DTO.DTOinservible;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -188,7 +194,7 @@ public class ClienteDao  extends BaseDao {
     //FUNCION QUE MUESTAR HISTORIAL DE PEDIDOS
     public ArrayList<DTOPedidoCliente> mostrarHistorial(String DNI) {
         ArrayList<DTOPedidoCliente> pedidos = new ArrayList<>();
-        String sql = "SELECT truncate(sum(pr.precio*pt.cantidad),1),sum(pt.cantidad),p.numeroOrden , p.estado , f.nombre,p.fechaRecojo FROM pedidos p\n" +
+        String sql = "SELECT truncate(sum(pr.precio*pt.cantidad),1),sum(pt.cantidad),p.numeroOrden , p.estado , f.nombre,p.fechaRecojo,p.codigoaleatorio FROM pedidos p\n" +
                 "INNER JOIN producto_tiene_pedidos pt ON pt.pedidos_numeroOrden=p.numeroOrden\n" +
                 "INNER JOIN producto pr ON pr.idProducto=pt.producto_idProducto\n" +
                 "INNER JOIN farmacia f ON pr.farmacia_ruc = f.ruc\n" +
@@ -204,14 +210,42 @@ public class ClienteDao  extends BaseDao {
                 String estado = rs.getString(4);
                 String farmacia = rs.getString(5);
                 String fecha = rs.getString(6);
-                pedidos.add(new DTOPedidoCliente(numeroOrden, cantidad, estado, resumenPago, farmacia,fecha));
+                String codigo = rs.getString(7);
+                pedidos.add(new DTOPedidoCliente(numeroOrden, cantidad, estado, resumenPago, farmacia,fecha,codigo));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return pedidos;
     }
-
+    public ArrayList<DTOPedidoCliente> mostrarHistorialPaginacion(String DNI, String offset) {
+        ArrayList<DTOPedidoCliente> pedidos = new ArrayList<>();
+        String sql = "SELECT truncate(sum(pr.precio*pt.cantidad),1),sum(pt.cantidad),p.numeroOrden , p.estado , f.nombre,p.fechaRecojo,p.codigoaleatorio FROM pedidos p\n" +
+                "INNER JOIN producto_tiene_pedidos pt ON pt.pedidos_numeroOrden=p.numeroOrden\n" +
+                "INNER JOIN producto pr ON pr.idProducto=pt.producto_idProducto\n" +
+                "INNER JOIN farmacia f ON pr.farmacia_ruc = f.ruc\n" +
+                "WHERE p.usuarioDni = ? GROUP BY p.numeroOrden ORDER BY p.numeroOrden DESC LIMIT 4 OFFSET ?";
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+            pstmt.setString(1, DNI);
+            int offset_num = (Integer.parseInt(offset)-1)*4;
+            pstmt.setInt(2,offset_num);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                double resumenPago = rs.getDouble(1);
+                int cantidad = rs.getInt(2);
+                int numeroOrden = rs.getInt(3);
+                String estado = rs.getString(4);
+                String farmacia = rs.getString(5);
+                String fecha = rs.getString(6);
+                String codigo = rs.getString(7);
+                pedidos.add(new DTOPedidoCliente(numeroOrden, cantidad, estado, resumenPago, farmacia,fecha,codigo));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return pedidos;
+    }
 
     //FUNCION VER EL CARRITO DE COMPRAS
     public void verCarrito() {
@@ -273,6 +307,38 @@ public class ClienteDao  extends BaseDao {
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
             pstmt.setString(1, ruc);
             pstmt.setString(2, "%" + nombre + "%");
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    DTOBuscarProductoCliente producto = new DTOBuscarProductoCliente();
+                    producto.setNombre(rs.getString(1));
+                    producto.setDescripcion(rs.getString(2));
+                    producto.setFoto(rs.getString(3));
+                    producto.setPrecio(rs.getDouble(4));
+                    producto.setIdProducto(rs.getInt(5));
+                    productos.add(producto);
+                }
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return productos;
+    }
+    public ArrayList<DTOBuscarProductoCliente> buscarProductoPaginacion(String ruc, String nombre,String offset) {
+        ArrayList<DTOBuscarProductoCliente> productos = new ArrayList<>();
+
+        nombre = nombre.toLowerCase();
+
+        String sql = "SELECT p.nombre,p.descripcion,p.foto,p.precio,p.idProducto FROM producto p INNER JOIN farmacia f ON f.ruc = p.farmacia_ruc  WHERE f.ruc = ? AND lower(p.nombre) LIKE ? \n" +
+                "ORDER BY p.nombre LIMIT 8 OFFSET ?;";
+
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+            pstmt.setString(1, ruc);
+            pstmt.setString(2, "%" + nombre + "%");
+            int offset_num = (Integer.parseInt(offset)-1)*8;
+            pstmt.setInt(3,offset_num);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -389,13 +455,39 @@ public class ClienteDao  extends BaseDao {
         }
         return existe;
     }
+    public void listarImg(String id,HttpServletResponse response){
+        String sql="SELECT recetas FROM producto_tiene_pedidos WHERE idProducto_has_Pedidoscol = ?";
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        BufferedInputStream bufferedInputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
+        try(Connection conn = this.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql)){
+            outputStream=response.getOutputStream();
+            pstmt.setString(1,id);
+            try(ResultSet rs = pstmt.executeQuery()){
+                if(rs.next()){
+                   inputStream=rs.getBinaryStream(1);
+                }
+            }
+            bufferedInputStream= new BufferedInputStream(inputStream);
+            bufferedOutputStream = new BufferedOutputStream(outputStream);
+            int i =0;
+            while ((i=bufferedInputStream.read())!=-1){
+                bufferedOutputStream.write(i);
+            }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public void crearPedido(ArrayList<DTOCarritoCliente> dtoCarritoClientes, String fecha, String hora, String dni) {
-        String sql = "INSERT INTO pedidos(fechaRecojo,estado,usuarioDni) VALUES(?,'Pendiente',?)";
+        String sql = "INSERT INTO pedidos(fechaRecojo,estado,usuarioDni,codigoaleatorio) VALUES(?,'Pendiente',?,?)";
         try (Connection conn = this.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);) {
             pstmt.setString(1, fecha + " " + hora);
             pstmt.setString(2, dni);
+            pstmt.setString(3, "TD"+Math.round(Math.random()*1000));
             pstmt.executeUpdate();
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 rs.next();
@@ -406,7 +498,7 @@ public class ClienteDao  extends BaseDao {
                         pstmt2.setInt(1, key);
                         pstmt2.setInt(2, Integer.parseInt(carr.getCodigo()));
                         pstmt2.setInt(3, carr.getCantidad());
-                        pstmt2.setString(4, carr.getReceta());
+                        pstmt2.setBlob(4, carr.getReceta());
                         pstmt2.executeUpdate();
                     }
                 }
@@ -415,55 +507,91 @@ public class ClienteDao  extends BaseDao {
             e.printStackTrace();
         }
     }
-   /* public ArrayList<DTOCarritoCliente> buscarCarrito(String ruc){
-        ArrayList<DTOCarritoCliente> listaCarrito = new ArrayList<>();
-        String sqlselect="SELECT * FROM carrito";
-        try(Connection conn = DriverManager.getConnection(url,user,password);
-            PreparedStatement pstmt=conn.prepareStatement(sqlselect)){
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()){
-                String cantidad = rs.getString(2);
-                String idProducto = rs.getString(3);
-                DTOBuscarProductoCliente bBuscarProductoCliente = buscarProductoporId(ruc,Integer.parseInt(idProducto));
-                String stock = rs.getString(4);
-                String preciototal = rs.getString(5);
-                listaCarrito.add(new DTOCarritoCliente(rs.getInt(1),bBuscarProductoCliente.getNombre(),idProducto,stock,Integer.parseInt(cantidad),Double.parseDouble(preciototal),bBuscarProductoCliente.getFoto()));
+    public ArrayList<DTOinservible> listaSinRepetir(ArrayList<DTOCarritoCliente> dtoCarritoClientes){
+        Set<DTOinservible> dtOinservibles = new HashSet<>();
+        ArrayList<DTOinservible> lista = new ArrayList<>();
+        for(DTOCarritoCliente dtoCarritoCliente2 : dtoCarritoClientes) {
+            int cantidad = 0;
+            for (DTOCarritoCliente dtoCarritoCliente3 : dtoCarritoClientes) {
+                if (dtoCarritoCliente2.getCodigo().equalsIgnoreCase(dtoCarritoCliente3.getCodigo())) {
+                    cantidad = cantidad + dtoCarritoCliente3.getCantidad();
+                    System.out.println("Cantidad dentro de iterativa: "+cantidad);
+                }
+            }
+            DTOinservible  dtOinservible=new DTOinservible();
+            dtOinservible.setCodigo(dtoCarritoCliente2.getCodigo());
+            dtOinservible.setCantidad(cantidad);
+            dtOinservible.setStock(dtoCarritoCliente2.getStock());
+            dtOinservibles.add(dtOinservible);
+            System.out.println("Cantidad dentro de iterativa: "+cantidad);
+        }
+        lista.addAll(dtOinservibles);
+        System.out.println("Cantidad: "+ lista.get(0).getCantidad());
+        return lista;
+    }
+    public boolean validarStock(ArrayList<DTOinservible> dtOinservible){
+        boolean validacion=true;
+        for(DTOinservible dtOinservible1 : dtOinservible){
+            if(Integer.parseInt(dtOinservible1.getStock()) < dtOinservible1.getCantidad()){
+                validacion = false;
+            }
+        }
+        return validacion;
+    }
+    public void restarStock(ArrayList<DTOinservible> dtOinservibles){
+        String sql ="UPDATE producto SET stock = ? WHERE (idProducto = ?)";
+        for (DTOinservible dtOinservible : dtOinservibles){
+            try(Connection conn = this.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                int nuevoStock=Integer.parseInt(dtOinservible.getStock()) - dtOinservible.getCantidad();
+                System.out.println("Nuevo Stock: "+nuevoStock);
+                pstmt.setString(1,String.valueOf(nuevoStock));
+                pstmt.setString(2,dtOinservible.getCodigo());
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public ArrayList<DTOinservible> listaStockSumar(String idPedido){
+        ArrayList<DTOinservible> datos = new ArrayList<>();
+        String sqlSelect="SELECT producto_idProducto,sum(cantidad), p.stock FROM producto_tiene_pedidos pt INNER JOIN producto p ON pt.producto_idProducto=p.idProducto WHERE pedidos_numeroOrden = ? GROUP BY pt.producto_idProducto;";
+        String sql="UPDATE producto SET stock = ? WHERE (idProducto = ?)";
+        try(Connection conn = this.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sqlSelect)){
+            pstmt.setString(1,idPedido);
+            try(ResultSet rs = pstmt.executeQuery()){
+                while (rs.next()){
+                    DTOinservible dtOinservible = new DTOinservible();
+                    dtOinservible.setCodigo(rs.getString(1));
+                    dtOinservible.setCantidad(rs.getInt(2));
+                    dtOinservible.setStock(rs.getString(3));
+                    datos.add(dtOinservible);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return listaCarrito;
-    }*/
-    /*public void borrarCarrito(){
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        String sql ="DELETE FROM carrito";
-        try(Connection conn= DriverManager.getConnection(url,user,password);
-            Statement stmt = conn.createStatement()){
-            stmt.executeUpdate(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        return datos;
+    }
+
+    public void sumarStock(ArrayList<DTOinservible> dtOinservibles){
+        String sql ="UPDATE producto SET stock = ? WHERE (idProducto = ?)";
+        for (DTOinservible dtOinservible : dtOinservibles){
+            try(Connection conn = this.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                int nuevoStock=Integer.parseInt(dtOinservible.getStock()) + dtOinservible.getCantidad();
+                System.out.println("Nuevo Stock: "+nuevoStock);
+                pstmt.setString(1,String.valueOf(nuevoStock));
+                pstmt.setString(2,dtOinservible.getCodigo());
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
-    public void borrarCarritoporId(int idCarrito){
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        System.out.println(idCarrito);
-        String sql ="DELETE FROM carrito WHERE (idcarrito = ?);";
-        try(Connection conn= DriverManager.getConnection(url,user,password);
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
-            pstmt.setInt(1,idCarrito);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     public void cancelarPedido(int numeroOrden) {
         String sql = "UPDATE pedidos SET estado = 'Cancelado' WHERE (numeroOrden = ?);";
@@ -481,22 +609,45 @@ public class ClienteDao  extends BaseDao {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String fecha_actual= dtf5.format(LocalDateTime.now());
-        try
-        {
+        try {
             Date d1 = df.parse(fecha_actual);
             Date d2 = df.parse(fecha);
             long diff = d2.getTime() - d1.getTime();
-            long day=diff/(24*60*60*1000);
-            long hour=(diff/(60*60*1000)-day*24);
-            long min=((diff/(60*1000))-day*24*60-hour*60);
-            System.out.println("MINUTOS EN HORAS: "+ min/60.0);
+            long day = diff / (24 * 60 * 60 * 1000);
+            long hour = (diff / (60 * 60 * 1000) - day * 24);
+            long min = ((diff / (60 * 1000)) - day * 24 * 60 - hour * 60);
             horas=String.valueOf(day*24 + hour + (min/60.0));
-            System.out.println("HORAS: "+ horas);
         }
         catch (Exception e)
         {
             System.out.println(e);
         }
         return horas;
+    }
+
+    public boolean validarFecha(String fecha) {
+        boolean fechaCorrecta = false;
+        String horas = null;
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter dtf5 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String fecha_actual= dtf5.format(LocalDateTime.now());
+        try {
+            Date d1 = df.parse(fecha_actual);
+            Date d2 = df.parse(fecha);
+            long diff = d2.getTime() - d1.getTime();
+            long day = diff / (24 * 60 * 60 * 1000);
+            long hour = (diff / (60 * 60 * 1000) - day * 24);
+            long min = ((diff / (60 * 1000)) - day * 24 * 60 - hour * 60);
+            horas=String.valueOf(day*24 + hour + (min/60.0));
+            System.out.println("Horas"+horas);
+            if(Double.parseDouble(horas)> 0){
+                fechaCorrecta = true;
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        return fechaCorrecta;
     }
 }
